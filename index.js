@@ -1,7 +1,13 @@
 /* Protocol Conection */
 const { Database } = require('./Mysql');
-const process = require('process');
+const { insertTicket } = require('./ticket');
 
+const database = Database({
+  host: 'localhost',
+  user: 'root',
+  database: 'sch_spbmaxweb',
+  password: 'Solucionespb2.',
+});
 const net = require('net');
 const port = 3070;
 const host = 'localhost';
@@ -19,6 +25,11 @@ server.on('connection', function(sock) {
 
     sock.on('data', function(data) {
         console.log('DATA ' + sock.remoteAddress + ': ' + data);
+        data = data.toString()
+        const list_trama = data.split(',');
+        if (list_trama[0] === 'HS' && list_trama[1] === '10') {
+          insertTicket(data, database);
+        }
         // Write the data back to all the connected, the client will receive it as data from the server
         sockets.forEach(function(sock, index, array) {
             sock.write(sock.remoteAddress + ':' + sock.remotePort + " said " + data + '\n');
@@ -36,36 +47,3 @@ server.on('connection', function(sock) {
 });
 
 
-// const database = Database({
-//   host: 'localhost',
-//   user: 'root',
-//   database: 'sch_spbmaxweb',
-//   password: 'Solucionespb2.',
-// });
-
-// let scv;
-// let listArgs;
-// let nticket;
-// let dateIn;
-// let nterminal;
-
-// database.connect((err) => {
-//   if (err) {
-//     database.end();
-//     database.destroy();
-//   };
-// });
-/*
-scv = process.argv[2];
-listArgs = scv.split(',');
-nticket = listArgs[5];
-dateIn = listArgs[4];
-nterminal = parseInt(listArgs[3]);
-
-database.query('CALL pa_insert_ticket(?,?,?,?);', [1, nterminal, dateIn, nticket],(err, result, fields) => {
-  if (err) throw err;
-  console.log(result);
-});
-
-database.end();
-*/
