@@ -23,10 +23,10 @@ class ServerTCP {
             const controller = new this.Controller(Database);
             controller.makeTrama(data);
             const response = await controller.execute();
+            
             //Write the data back to all the connected, the client will receive it as data from the server
             this.sockets.forEach((sock, index, array) => {
-                sock.write(sock.remoteAddress + ':' + sock.remotePort + " said " + data + '\n');
-                sock.write(JSON.stringify(response));
+                sock.write(response);
             });
         });
     
