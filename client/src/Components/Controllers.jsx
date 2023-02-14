@@ -44,14 +44,14 @@ export default function Controllers() {
             <svg viewbox="0 0 100 100">
                 <circle cx="50" cy="50" r="30" stroke-width="8" fill="none"/>
             </svg>
-            <button onClick={handlerClick}> fdasd </button>
         </div>
+            <button onClick={handlerClick}> fdasd </button>
         <div class="loader-circle-93-r">
             <svg viewbox="0 0 100 100">
                 <circle cx="50" cy="50" r="30" stroke-width="8" fill="none"/>
             </svg>
-            <button onClick={handlerClick}> fasdf </button>
         </div>
+            <button onClick={handlerClick}> fasdf </button>
           <div>
             {/* <button onClick={handlerClick}>  </button> */}
           </div>
