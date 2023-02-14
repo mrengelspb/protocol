@@ -11,7 +11,6 @@ class Database {
   }
 
   insertTicket(trama) {
-    console.log(trama);
     this.database.connect((err) => {
       if (err) throw err;
     });

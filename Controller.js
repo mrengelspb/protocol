@@ -7,22 +7,17 @@ class Controller {
   }
 
   makeTrama(data) {
+    data = data.slice(0, data.indexOf('\\r\\n')) + '\\r\\n';
     const listArgs = data.split(',');
-    if (listArgs[listArgs.length - 1] !== '\\r\\n\n') {
-      console.log("Encolamiendo de varias tramas !");
-    }
     for (let i  = 0; i < this.fields.length; i++) {
-      if (listArgs[i] !== '\\r\\n\n') {
-        this.trama[this.fields[i]] = listArgs[i];
-      } else {
-        this.trama[this.fields[i]] = null;
-      }
+      this.trama[this.fields[i]] = listArgs[i];
     }
   }
 
   async execute() {
     const database = new this.Database();
     database.init();
+    if (this.trama.header !== "HS") return "Command not Found !\r\n";
     switch (this.trama.type) {
       case "10":
         const result = await database.insertTicket(this.trama);
@@ -32,7 +27,6 @@ class Controller {
         const command = `${query[0].id},${query[0].description}\r\n`;
         return command;
       default:
-        console.log("Command not Found !");
         return "Command not Found !\r\n";
     }
   }
