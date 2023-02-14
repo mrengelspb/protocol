@@ -1,0 +1,108 @@
+.controller--container {
+    padding: 20px;
+    width: 40vw;
+}
+
+.card--info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card--info--list {
+    padding: 0px;
+    width: 50%;
+}
+
+.card--info--list--item {
+    margin: 5px 0px;
+    display: flex;
+    list-style: none;
+    font-size: 12px;
+    justify-content: space-between;
+}
+
+.card--info--list--item p {
+    margin: 0px;
+    padding: 0px;
+}
+
+.off {
+    width: 15px;
+    height: 15px;
+    background-color: var(--status--off--color);
+    margin: 0px 10px;
+}
+
+.on {
+    width: 15px;
+    height: 15px;
+    background-color: var(--status--on--color);
+    margin: 0px 10px;
+}
+
+.controllers--buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.controllers--buttons div {
+    width: 100px;
+    height: 100px;
+    margin: 10px 10px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: lightgray;
+}
+
+
+.controllers--buttons button {
+    width: 70px;
+    height: 70px;
+    display: block;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 2s ease;
+    border: 5px solid green;
+}
+
+
+.loader-circle-93 svg {
+    height: 100px;
+    width: 100px;
+    stroke: green;
+    transform: rotate(-90deg);
+}
+.loader-circle-93 circle {
+    stroke-dasharray: 190;
+    stroke-dashoffset: 190;
+    animation: anm-loader-circle-93 2.3s 1;
+   animation-fill-mode: forwards;
+}
+@keyframes anm-loader-circle-93 {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+
+.loader-circle-93-r svg {
+    height: 100px;
+    width: 100px;
+    stroke: red;
+    transform: rotate(-90deg);
+}
+.loader-circle-93-r circle {
+    stroke-dasharray: 190;
+    stroke-dashoffset: 190;
+    animation: anm-loader-circle-93 2.3s 1;
+   animation-fill-mode: forwards;
+}
+@keyframes anm-loader-circle-93 {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}

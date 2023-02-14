@@ -1,0 +1,33 @@
+.ticket {
+    text-align: center;
+}
+
+.ticket--title {
+    margin: 30px 0px 0px 0px;
+}
+
+.ticket--info {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    height: 100px;
+}
+
+.ticket--data {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+}
+
+.ticket--button {
+    width: 200px;
+    margin: 20px 40% 0px 40%;
+    background-color: aqua;
+    border: none;
+    padding: 20px 10px;
+}
+
+.ticket--clock {
+    width: 58vw;
+    padding: 20px;
+}

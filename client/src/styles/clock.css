@@ -1,0 +1,7 @@
+@import './base.css';
+
+.clock {
+    font-family: digital; 
+    font-size: 64px;
+    color: var(--secondary--color);
+}

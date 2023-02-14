@@ -1,0 +1,58 @@
+.searchTicketForm {
+    display: flex;
+    flex-direction: column; 
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.card--form{
+    width: 40vw;
+    display: flex;
+    flex-direction: column; 
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid var(--gray--color);
+}
+
+.card--table {
+    width: 35vw;
+    padding: 10px 10px;
+}
+
+.card--form--ouput {
+    text-align: start;
+    padding: 10px 10px;
+    width: 60%;
+    border-bottom: 1px solid var(--gray--color);
+    margin: 10px 0px;
+    color: gray;
+    font-size: 18px;
+}
+
+.card--form--input {
+    width: 60%;
+    margin: 10px 0px;
+    text-align: start;
+    font-size: 18px;
+}
+
+.card--form--input::placeholder {
+    color: rgb(105, 105, 105);
+}
+
+.card--button--jump {
+    background-color: var(--primary--color);
+    color: var(--text-color-light);
+    font-weight: bold;
+    padding: 5px 40px;
+    margin: 5px 10px;
+}
+.card--button--pay {
+    background-color: var(--primary--color);
+    color: var(--text-color-light);
+    font-weight: bold;
+    padding: 5px 40px;
+    margin: 5px 10px;
+}

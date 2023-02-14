@@ -1,0 +1,74 @@
+:root {
+    /* Colors */
+    --dark--color: #000000;
+    --gray--color: #EBEBEB;
+    --ligth--color: #FFFFFF;
+    --primary--color: #006DFF;
+    --secondary--color: #8D16BF;
+    --terciary--color: #D8D8D8;
+    --status--on--color: #1DCC4C;
+    --status--off--color: #FF0000;
+    --shadow--color: #000000A6;
+    
+    /* Background */
+    --black-background: var(--dark--color);
+    --gray-background: var(--gray--color);
+    --white-background: var(--ligth--color);
+    --brown-background: var(--terciary--color);
+
+
+    /* Text */
+    /* --gray-background: #0000007C; */
+    --title-type: 'Montserrat', sans-serif;
+    --title-weigth: bold;
+    --title-color: var(--dark--color);
+    --title-size: 28px;
+    --text-color-dark:var(--dark--color);
+    --text-color-light: var(--ligth--color);
+}
+
+@font-face {
+    font-family: digital;
+    src: url('./Fonts/Technology.ttf');
+}
+
+* {
+    box-sizing: border-box;
+}
+
+
+.input {
+    background-color: var(--gray-background);
+    border-radius: 5px;
+    border: none;
+    padding: 10px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    appearance: textfield;
+}
+
+.button {
+    border-radius: 5px;
+    border: none;
+    padding: 8px;
+    box-shadow: 0px 4px 0px gray;
+}
+
+.button:active {
+    box-shadow: 0px 2px 0px gray;
+}
+
+.long--button {
+    border-radius: 5px;
+    border: none;
+    font-weight: bold;
+    padding: 5px 40px;
+    margin: 5px 10px;
+}
