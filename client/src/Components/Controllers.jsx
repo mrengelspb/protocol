@@ -3,8 +3,17 @@ import '../styles/controllers.css';
 
 export default function Controllers() {
   const handlerClick = (ev) => {
-    const buttonHTML = ev.target;
-    buttonHTML.classList.add('roll');
+    console.dir(ev.target);
+    const svgHTML = ev.target.children[0];
+    const a_cl = new Array(...svgHTML.classList)
+    console.log(a_cl)
+    if (a_cl.includes('on')) {
+      svgHTML.classList.remove('on');
+      svgHTML.classList.add('off');
+    } else {
+      svgHTML.classList.remove('off');
+      svgHTML.classList.add('on');
+    }
     // buttonHTML.classList.toggle('roll');
   };
 
@@ -37,27 +46,35 @@ export default function Controllers() {
               </div>
             </li>
           </ul>
-        </div>6
+        </div>
 
         <div className="controllers--buttons">
-        <div class="loader-circle-93">
-            <svg viewbox="0 0 100 100">
-                <circle cx="50" cy="50" r="30" stroke-width="8" fill="none"/>
+        <div className="loader-circle-93">
+            <svg
+              onClick={handlerClick}
+              viewbox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="30"
+                  stroke-width="8"
+                  fill="none"
+                />
             </svg>
         </div>
-            <button onClick={handlerClick}> fdasd </button>
-        <div class="loader-circle-93-r">
-            <svg viewbox="0 0 100 100">
-                <circle cx="50" cy="50" r="30" stroke-width="8" fill="none"/>
+        <div className="loader-circle-93">
+            <svg
+              onClick={handlerClick}
+              viewbox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="30"
+                  stroke-width="8"
+                  fill="none"
+                />
             </svg>
         </div>
-            <button onClick={handlerClick}> fasdf </button>
-          <div>
-            {/* <button onClick={handlerClick}>  </button> */}
-          </div>
-          <div>
-            <button onClick={handlerClick}>  </button>
-          </div>
         </div>
     </div>
   )

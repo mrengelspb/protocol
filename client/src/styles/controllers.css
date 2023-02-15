@@ -70,38 +70,41 @@
 }
 
 
+
+
 .loader-circle-93 svg {
     height: 100px;
     width: 100px;
-    stroke: green;
     transform: rotate(-90deg);
 }
+
 .loader-circle-93 circle {
+    background-color: white;
     stroke-dasharray: 190;
     stroke-dashoffset: 190;
-    animation: anm-loader-circle-93 2.3s 1;
-   animation-fill-mode: forwards;
+    /* animation: anm-loader-circle-93 2.3s 1; */
+    animation-fill-mode: forwards;
 }
-@keyframes anm-loader-circle-93 {
+
+/* On */
+.on {
+    stroke: green;
+    animation: on 2.3s 1;
+}
+
+@keyframes on {
     100% {
         stroke-dashoffset: 0;
     }
 }
 
-
-.loader-circle-93-r svg {
-    height: 100px;
-    width: 100px;
+/* Off */
+.off {
     stroke: red;
-    transform: rotate(-90deg);
+    animation: off 2.3s 1;
 }
-.loader-circle-93-r circle {
-    stroke-dasharray: 190;
-    stroke-dashoffset: 190;
-    animation: anm-loader-circle-93 2.3s 1;
-   animation-fill-mode: forwards;
-}
-@keyframes anm-loader-circle-93 {
+
+@keyframes off {
     100% {
         stroke-dashoffset: 0;
     }

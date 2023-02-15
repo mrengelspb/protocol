@@ -10,6 +10,34 @@ class Database {
     });
   }
 
+  updateTicket(args) {
+    this.database.connect((err) => {
+      if (err) throw err;
+    });
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_ti_finalize(?, ?, ?, ?, ?, ?);', args, (err, result, fields) => {
+        console.log(result);
+        if (err) reject(err);
+        resolve(result);
+        this.database.end();
+      });
+    });
+  }
+
+  getTicket(id) {
+    this.database.connect((err) => {
+      if (err) throw err;
+    });
+    const args = [id];
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_ti_search(?);', args, (err, result, fields) => {
+        if (err) reject(err);
+        resolve(result[0]);
+        this.database.end();
+      });
+    })
+  }
+
   insertTicket(trama) {
     this.database.connect((err) => {
       if (err) throw err;
@@ -22,7 +50,6 @@ class Database {
         this.database.end();
       });
     })
-    
   }
 
   searchCMD(trama) {
