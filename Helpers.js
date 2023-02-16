@@ -36,8 +36,7 @@ function zeroPad(num, places) {
 }
 
 
-function codeBarGenerator(nTerminal) {
-  const now = new Date();
+function codeBarGenerator(nTerminal, now) {
   const year = now.getFullYear()- 2000; // YYYY
   let hour = now.getHours() + 1; // 1 - 24
   let minutes = now.getMinutes() + 1; // 1 - 60

@@ -17,7 +17,7 @@ export default function SearchTicket({ id, setId, setTicket }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ID_parking: 4,
+          ID_parking: 14,
         }),
       });
       console.log(response);

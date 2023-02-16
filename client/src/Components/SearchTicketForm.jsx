@@ -35,6 +35,30 @@ export default function SearchTicketForm({ id, ticket, setTicket }) {
     Out = ticket.out;
     Time = timeFormat(ticket.time);
     Total = ticket.total;
+
+    if (ticket.time >= 60) {
+      const hours = parseInt(ticket.time / 60);
+      const minutes = ticket.time % 60;
+      Total = hours;
+      if (minutes <= 15) {
+        Total += 0.25;
+      } else if (minutes <= 30) {
+        Total += 0.25;
+      } else if (minutes <= 45) {
+        Total += 0.25;
+      } else if (minutes <= 60) {
+        Total += 1.00;
+      }
+    }
+    if (ticket.time <= 15) {
+      Total += 0.25;
+    } else if (ticket.time <= 30) {
+      Total += 0.50;
+    } else if (ticket.time <= 45) {
+      Total += 0.75;
+    } else if (ticket.time <= 60) {
+      Total += 1.00;
+    }
   }
 
   const handlerUpdateTicket = async (ev) => {
@@ -55,7 +79,6 @@ export default function SearchTicketForm({ id, ticket, setTicket }) {
         }),
       });
       if (response.ok && response.status === 200) {
-        const data = await response.json();
         setTicket(null);
       } else {
         console.log("Error");

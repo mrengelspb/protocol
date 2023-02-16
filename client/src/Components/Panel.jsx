@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../styles/panel.css';
 
 export default function Panel() {
-  const [list, setList] = useState([]);
+  const [list, setList] = useState(null);
 
   const handlerSpaces = async () => {
     try {
@@ -10,7 +10,7 @@ export default function Panel() {
       const response = await fetch(url);
       if (response.ok && response.status === 200) {
         const data = await response.json();
-        setList(data[0]);
+        setList(data);
       }
     } catch (error) {
       console.log(error);
@@ -25,28 +25,25 @@ export default function Panel() {
     return () => {
       clearInterval(timer);
     }
-  }, []);
-
-  const listHTML = list.map((value) => {
-    return (
-      <div
-        className={`panel--spaces _${value.status}`}
-        key={value.id}
-      >
-        {value.number}
-      </div>
-    );
   });
+  let listHTML = [];
+  if (list != null) {
+      listHTML = list.map((value) => {
+      return (
+        <div
+          className={`panel--spaces _${value.status}`}
+          key={value.id}
+        >
+          {value.number}
+        </div>
+      );
+    });
+  }
 
   return(
     <div className="panel">
       <div className="panel--container">
         {listHTML}
-        {/* <div className="panel--spaces empty"></div>
-        <div className="panel--spaces on"></div>
-        <div className="panel--spaces medium"></div>
-        <div className="panel--spaces hight"></div>
-        <div className="panel--spaces maintance"></div> */}
       </div>
     </div>
   )

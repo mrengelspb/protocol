@@ -22,10 +22,12 @@ class Controller {
     if (this.trama.header !== "HS") return "Command not Found !\r\n";
     switch (this.trama.type) {
       case "10":
-        const codeBar = codeBarGenerator(this.trama.nTerminal);
+        const now = new Date();
+        const codeBar = codeBarGenerator(this.trama.nTerminal, now);
+        this.trama.arg1 = formatDate(now);
         this.trama.arg2 = codeBar
         const result = await database.insertTicket(this.trama);
-        return `SV,${this.trama.type},${result[0].nTicket},${formatDate(new Date())}\r\n`;
+        return `SV,${this.trama.type},${result[0].nTicket},${formatDate(now)}\r\n`;
       case "20":
         const query  = await database.searchCMD(this.trama);
         if (query.length === 0) return "Command not Found !\r\n";
