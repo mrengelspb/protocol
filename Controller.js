@@ -21,10 +21,11 @@ class Controller {
     switch (this.trama.type) {
       case "10":
         const result = await database.insertTicket(this.trama);
-        return `${result[0].nTicket}\r\n`;
+        return `SV,${this.trama.type},${result[0].nTicket}\r\n`;
       case "20":
         const query  = await database.searchCMD(this.trama);
-        const command = `${query[0].id},${query[0].description}\r\n`;
+        if (query.length === 0) return "Command not Found !\r\n";
+        const command = `SV,${this.trama.type},${query[0].id},${query[0].description}\r\n`;
         return command;
       default:
         return "Command not Found !\r\n";

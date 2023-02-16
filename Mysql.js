@@ -56,7 +56,7 @@ class Database {
     });
     const args =  [1, trama.nTerminal, trama.arg1, trama.arg2, trama.codeParking];
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_controler_v1(?,?,?,?,?);', args, (err, result, fields) => {
+      this.database.query('CALL pa_controller_v1(?,?,?,?,?);', args, (err, result, fields) => {
         if (err) reject(err);
         resolve(result[0]);
         this.database.end();
@@ -70,7 +70,7 @@ class Database {
     });
     const args =  [2, trama.nTerminal, trama.args1,  trama.arg2, trama.codeParking];
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_controler_v1(?,?,?,?,?);', args, (err, result, fields) => {
+      this.database.query('CALL pa_controller_v1(?,?,?,?,?);', args, (err, result, fields) => {
         if (err) reject(err);
         resolve(result[0]);
       });

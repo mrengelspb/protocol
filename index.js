@@ -1,17 +1,14 @@
 /* Protocol Conection */
 const express = require('express');
-const events = require('events');
-const { ServerTCP } = require('./ServerTCP');
+const { WebService } = require('./WebService');
 const { Controller } = require('./Controller');
 const cors = require('cors');
 const TicketController = require('./routes');
 require('dotenv').config();
 
-const eventEmitter = new events.EventEmitter();
-
 function RunServer() {
-    const serverTCP = new ServerTCP(Controller);
-    serverTCP.init();
+    const webService = new WebService(Controller);
+    webService.init();
 
     const app = express();
     app.use(express.json());
@@ -19,7 +16,5 @@ function RunServer() {
     app.use("/ticket", TicketController);
     app.listen(3000, () => {console.log("Server running on port: 3000")});
 }
-
-eventEmitter.on('scream', RunServer);
 
 RunServer();
