@@ -25,7 +25,6 @@ TicketController.post('/search/:id', async (req, res) => {
 
 
 TicketController.put('/update', async (req, res) => {
-  console.log("Holaa....");
   Date.prototype.addMins = function(m) {
     this.setTime(this.getTime() + (m*60*1000));
     return this;
@@ -42,7 +41,14 @@ TicketController.put('/update', async (req, res) => {
   const database = new Database();
   database.init();
   const response =  await database.updateTicket(args);
-  console.log(response);
+  res.send(response);
+});
+
+
+TicketController.get('/spaces', async (req, res) => {
+  const database = new Database();
+  database.init();
+  const response =  await database.spacesTicket();
   res.send(response);
 });
 

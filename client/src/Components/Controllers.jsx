@@ -2,19 +2,35 @@ import React from "react";
 import '../styles/controllers.css';
 
 export default function Controllers() {
+  const handlerCommand = async (command) => {
+    try {
+      const url = `http://localhost:3000/ticket/command`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: { command },
+      });
+      if (response.ok && response.status === 200) {
+        const data = await response.json();
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handlerClick = (ev) => {
-    console.dir(ev.target);
     const svgHTML = ev.target.children[0];
-    const a_cl = new Array(...svgHTML.classList)
-    console.log(a_cl)
+    const a_cl = new Array(...svgHTML.classList);
     if (a_cl.includes('on')) {
+      handlerCommand('$OB1'); //implement
       svgHTML.classList.remove('on');
       svgHTML.classList.add('off');
     } else {
+      handlerCommand('$OB2'); //implement
       svgHTML.classList.remove('off');
       svgHTML.classList.add('on');
     }
-    // buttonHTML.classList.toggle('roll');
   };
 
   return (
@@ -52,12 +68,13 @@ export default function Controllers() {
         <div className="loader-circle-93">
             <svg
               onClick={handlerClick}
-              viewbox="0 0 100 100">
+              viewBox="0 0 100 100">
                 <circle
+                  className="on"
                   cx="50"
                   cy="50"
                   r="30"
-                  stroke-width="8"
+                  strokeWidth="8"
                   fill="none"
                 />
             </svg>
@@ -65,12 +82,13 @@ export default function Controllers() {
         <div className="loader-circle-93">
             <svg
               onClick={handlerClick}
-              viewbox="0 0 100 100">
+              viewBox="0 0 100 100">
                 <circle
+                  className="on"
                   cx="50"
                   cy="50"
                   r="30"
-                  stroke-width="8"
+                  strokeWidth="8"
                   fill="none"
                 />
             </svg>

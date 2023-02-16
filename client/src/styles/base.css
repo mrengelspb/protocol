@@ -9,6 +9,8 @@
     --status--on--color: #1DCC4C;
     --status--off--color: #FF0000;
     --shadow--color: #000000A6;
+    --yellow--color: rgb(235, 235, 0);
+    --orange--color: orange;
     
     /* Background */
     --black-background: var(--dark--color);

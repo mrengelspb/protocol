@@ -1,0 +1,41 @@
+.panel {
+    width: 100vw;
+    height: 100vh;
+}
+
+.panel--container {
+    width: 100vw;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.panel--spaces {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+._0 {
+    background-color: var(--primary--color);
+}
+
+
+._1 {
+    background-color: var(--status--on--color);
+}
+
+._2 {
+    background-color: var(--orange--color);
+}
+
+._3 {
+    background-color: var(--status--off--color);
+}
+
+._4 {
+    background-color: var(--yellow--color);
+}
+

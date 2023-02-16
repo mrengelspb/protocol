@@ -5,8 +5,21 @@ class Database {
     this.database = Mysql.createConnection({
       host: 'localhost',
       user: 'root',
-      database: 'sch_spbmaxweb',
+      database: 'sch_spbfaraday',
       password: 'Solucionespb2.',
+    });
+  }
+
+  spacesTicket() {
+    this.database.connect((err) => {
+      if (err) throw err;
+    });
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_ti_spaces();', (err, result, fields) => {
+        if (err) reject(err);
+        resolve(result[0]);
+        this.database.end();
+      });
     });
   }
 
@@ -16,7 +29,6 @@ class Database {
     });
     return new Promise((resolve, reject) => {
       this.database.query('CALL pa_ti_finalize(?, ?, ?, ?, ?, ?);', args, (err, result, fields) => {
-        console.log(result);
         if (err) reject(err);
         resolve(result);
         this.database.end();
