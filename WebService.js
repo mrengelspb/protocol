@@ -13,6 +13,7 @@ const { Database } = require('./Mysql');
             this.connections.add(ws)
             ws.on('message', async (data) => {
                 data = data.toString();
+                console.log(data);
                 const controller = new this.Controller(Database);
                 controller.makeTrama(data);
                 const response = await controller.execute();

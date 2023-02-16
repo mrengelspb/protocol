@@ -1,3 +1,5 @@
+const { codeBarGenerator, formatDate } = require('./Helpers');
+
 class Controller {
   trama  = {};
   fields = ['header', 'type', 'serialTerminal', 'codeParking', 'nTerminal', 'arg1', 'arg2'];
@@ -20,8 +22,10 @@ class Controller {
     if (this.trama.header !== "HS") return "Command not Found !\r\n";
     switch (this.trama.type) {
       case "10":
+        const codeBar = codeBarGenerator(this.trama.nTerminal);
+        this.trama.arg2 = codeBar
         const result = await database.insertTicket(this.trama);
-        return `SV,${this.trama.type},${result[0].nTicket}\r\n`;
+        return `SV,${this.trama.type},${result[0].nTicket},${formatDate(new Date())}\r\n`;
       case "20":
         const query  = await database.searchCMD(this.trama);
         if (query.length === 0) return "Command not Found !\r\n";
