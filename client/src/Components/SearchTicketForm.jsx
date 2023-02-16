@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/searchTicketForm.css';
 
-export default function SearchTicketForm({ id, ticket }) {
+export default function SearchTicketForm({ id, ticket, setTicket }) {
   let In = '';
   let Out = '';
   let Time = '';
@@ -54,10 +54,9 @@ export default function SearchTicketForm({ id, ticket }) {
           min_used: ticket.time,
         }),
       });
-      console.log(response);
       if (response.ok && response.status === 200) {
         const data = await response.json();
-        console.log(data)
+        setTicket(null);
       } else {
         console.log("Error");
       }

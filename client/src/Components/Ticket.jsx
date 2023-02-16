@@ -25,6 +25,7 @@ export default function Ticket() {
         <SearchTicketForm
           id={id}
           ticket={ticket}
+          setTicket={setTicket}
         />
         <Controllers />
       </div>

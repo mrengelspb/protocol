@@ -22,5 +22,4 @@ function RunServer() {
 
 eventEmitter.on('scream', RunServer);
 
-
 RunServer();
