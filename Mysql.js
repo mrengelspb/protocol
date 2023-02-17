@@ -4,7 +4,7 @@ const { formatDate, addMinutes } = require('./Helpers');
 class Database {
   init() {
     this.database = Mysql.createConnection({
-      host: 'localhost',
+      host: '192.168.0.223',
       user: 'root',
       database: 'sch_spbfaraday',
       password: 'Solucionespb2.',
@@ -74,6 +74,20 @@ class Database {
       this.database.query('CALL pa_controller_v1(?,?,?,?,?);', args, (err, result, fields) => {
         if (err) reject(err);
         resolve(result[0]);
+      });
+      this.database.end();
+    });
+  }
+
+  updateCMD(trama) {
+    this.database.connect((err) => {
+      if (err) throw err;
+    });
+    const args =  [trama.arg1];
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_updateCMD(?);', args, (err, result, fields) => {
+        if (err) reject(err);
+        resolve(result);
       });
       this.database.end();
     });

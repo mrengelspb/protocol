@@ -40,8 +40,13 @@ class Controller {
         // return command;
       case "20":
         query = await database.searchCMD(this.trama);
-        if (query.length === 0) return "Command not Found !\r\n";
-        command = `SV,${this.trama.type},${query[0].id},${query[0].description}\r\n`;
+        if (query.length === 0) return "SV,0,0,0,\r\n";
+        command = `SV,${this.trama.type},${query[0].id},${query[0].description},\r\n`;
+        return command;
+      case "21":
+        query = await database.updateCMD(this.trama);
+        //command = `SV, exitoso,\r\n`;
+        console.log("CMD recepcion Exitosa.")
         return command;
       default:
         return "Command not Found !\r\n";
