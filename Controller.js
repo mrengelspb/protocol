@@ -25,7 +25,7 @@ class Controller {
         const now = new Date();
         const codeBar = codeBarGenerator(this.trama.nTerminal, now);
         this.trama.arg1 = formatDate(now);
-        this.trama.arg2 = codeBar
+        this.trama.arg2 = codeBar;
         const result = await database.insertTicket(this.trama);
         return `SV,${this.trama.type},${result[0].nTicket},${formatDate(now)}\r\n`;
       case "20":

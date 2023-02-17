@@ -77,6 +77,34 @@ class Database {
       this.database.end();
     });
   }
+
+
+  insertCommand(nterminal, command, status, id_parking) {
+    this.database.connect((err) => {
+      if (err) throw err;
+    });
+    const args =  [nterminal, command, status, id_parking];
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_insertCommand(?,?,?,?);', args, (err, result, fields) => {
+        if (err) reject(err);
+        resolve(result[0]);
+      });
+      this.database.end();
+    });
+  }
+
+  loadController() {
+    this.database.connect((err) => {
+      if (err) throw err;
+    });
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_ct_load();', (err, result, fields) => {
+        if (err) reject(err);
+        resolve(result[0]);
+      });
+      this.database.end();
+    });
+  }
 }
 
 exports.Database = Database;

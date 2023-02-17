@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../styles/panel.css';
 
 export default function Panel() {
-  const [list, setList] = useState(null);
+  const [list, setList] = useState([]);
 
   const handlerSpaces = async () => {
     try {
@@ -26,19 +26,17 @@ export default function Panel() {
       clearInterval(timer);
     }
   });
-  let listHTML = [];
-  if (list != null) {
-      listHTML = list.map((value) => {
-      return (
-        <div
-          className={`panel--spaces _${value.status}`}
-          key={value.id}
-        >
-          {value.number}
-        </div>
-      );
-    });
-  }
+
+  const listHTML = list.map((value) => {
+    return (
+      <div
+        className={`panel--spaces _${value.status}`}
+        key={value.id}
+      >
+        {value.number}
+      </div>
+    );
+  });
 
   return(
     <div className="panel">

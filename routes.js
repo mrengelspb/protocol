@@ -52,4 +52,19 @@ TicketController.get('/spaces', async (req, res) => {
   res.send(response);
 });
 
+TicketController.post('/command', async (req, res) => {
+  const { nTerminal, command, status, id_parking} = req.body;
+  const database = new Database();
+  database.init();
+  const response =  await database.insertCommand(nTerminal, command, status, id_parking);
+  res.send(response);
+});
+
+TicketController.get('/controller', async (req, res) => {
+  const database = new Database();
+  database.init();
+  const response =  await database.loadController();
+  res.send(response);
+});
+
 module.exports = TicketController;

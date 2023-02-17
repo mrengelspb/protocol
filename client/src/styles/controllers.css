@@ -60,52 +60,46 @@
 
 
 .controllers--buttons button {
-    width: 70px;
-    height: 70px;
-    display: block;
+    width: 100px;
+    height: 100px;
     cursor: pointer;
     border-radius: 50%;
-    transition: all 2s ease;
-    border: 5px solid green;
+    border: none;
+    padding: 0px;
+    box-shadow: inset 0px 0px 10px gray;
+    margin: 5px;
 }
 
 
 
 
 .loader-circle-93 svg {
-    height: 100px;
-    width: 100px;
+    height: 60px;
+    width: 60px;
     transform: rotate(-90deg);
 }
 
 .loader-circle-93 circle {
     background-color: white;
     stroke-dasharray: 190;
-    stroke-dashoffset: 190;
-    /* animation: anm-loader-circle-93 2.3s 1; */
-    animation-fill-mode: forwards;
-}
-
-/* On */
-.on {
+    stroke-dashoffset: 0;
     stroke: green;
-    animation: on 2.3s 1;
-}
-
-@keyframes on {
-    100% {
-        stroke-dashoffset: 0;
-    }
+    animation-fill-mode: backwards;
 }
 
 /* Off */
 .off {
-    stroke: red;
-    animation: off 2.3s 1;
+    animation: off 1s 1;
 }
 
 @keyframes off {
+    0% {
+        stroke: transparent;
+        stroke-dashoffset: 190;
+    }
+
     100% {
         stroke-dashoffset: 0;
+        stroke: red;
     }
 }
