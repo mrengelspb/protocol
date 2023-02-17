@@ -1,4 +1,5 @@
 const Mysql = require('mysql2');
+const { formatDate, addMinutes } = require('./Helpers');
 
 class Database {
   init() {
@@ -99,6 +100,37 @@ class Database {
     });
     return new Promise((resolve, reject) => {
       this.database.query('CALL pa_ct_load();', (err, result, fields) => {
+        if (err) reject(err);
+        resolve(result[0]);
+      });
+      this.database.end();
+    });
+  }
+
+  findTicket(trama) {
+    this.database.connect((err) => {
+      if (err) throw err;
+    });
+    console.log(trama)
+    const args = [trama.arg1];
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_findTicket(?);', args, (err, result, fields) => {
+        if (err) reject(err);
+        resolve(result[0]);
+      });
+      this.database.end();
+    });
+  }
+
+  finalizeTicket(trama) {
+    this.database.connect((err) => {
+      if (err) throw err;
+    });
+    console.log(trama)
+    const now = new Date();
+    const args = [trama.args1, formatDate(now), formatDate(addMinutes(now)), 3];
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_finalizeTicket(?,?,?,?);', args, (err, result, fields) => {
         if (err) reject(err);
         resolve(result[0]);
       });

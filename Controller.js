@@ -17,6 +17,8 @@ class Controller {
   }
 
   async execute() {
+    let query = null;
+    let command = null;
     const database = new this.Database();
     database.init();
     if (this.trama.header !== "HS") return "Command not Found !\r\n";
@@ -28,10 +30,18 @@ class Controller {
         this.trama.arg2 = codeBar;
         const result = await database.insertTicket(this.trama);
         return `SV,${this.trama.type},${result[0].nTicket},${formatDate(now)}\r\n`;
+      case "11":
+        query = await database.findTicket(this.trama);
+        command = `SV,${this.trama.type},${query[0].code},${query[0].status}\r\n`;
+        return command;
+      case "12":
+        query = await database.finalizeTicket(this.trama);
+        // command = `SV,${this.trama.type},${query[0].code},${query[0].status}\r\n`;
+        // return command;
       case "20":
-        const query  = await database.searchCMD(this.trama);
+        query = await database.searchCMD(this.trama);
         if (query.length === 0) return "Command not Found !\r\n";
-        const command = `SV,${this.trama.type},${query[0].id},${query[0].description}\r\n`;
+        command = `SV,${this.trama.type},${query[0].id},${query[0].description}\r\n`;
         return command;
       default:
         return "Command not Found !\r\n";

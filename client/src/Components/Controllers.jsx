@@ -55,7 +55,7 @@ export default function Controllers() {
 
     if (!buttonHTML.disabled) {
       buttonHTML.disabled = true;
-      handlerCommand(buttonHTML.id, `$OB${buttonHTML.id}`); //implement
+      handlerCommand(buttonHTML.id, `$OB1`); //implement
       svgHTML.classList.add('off');
     }
     setTimeout(()=> {

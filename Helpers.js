@@ -1,3 +1,8 @@
+function addMinutes(date, minutes) {
+  return new Date(date.getTime() + minutes * 60000);
+}
+
+
 function formatDate(date) {
   const year = date.getFullYear() % 100;
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -51,4 +56,4 @@ function codeBarGenerator(nTerminal, now) {
   return `${nTerminal}${year}${julian_day}${hour}${minutes}${seconds}`;
 }
 
-module.exports = { codeBarGenerator, formatDate};
+module.exports = { codeBarGenerator, formatDate, addMinutes };
