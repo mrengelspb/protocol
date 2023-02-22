@@ -1,3 +1,9 @@
+function getHourDifference(date1, date2) {
+  const diffInMilliseconds = Math.abs(date2 - date1);
+  const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+  return diffInHours;
+}
+
 function addMinutes(date, minutes) {
   return new Date(date.getTime() + minutes * 60000);
 }
@@ -56,4 +62,4 @@ function codeBarGenerator(nTerminal, now) {
   return `${nTerminal}${year}${julian_day}${hour}${minutes}${seconds}`;
 }
 
-module.exports = { codeBarGenerator, formatDate, addMinutes };
+module.exports = { codeBarGenerator, formatDate, addMinutes, getHourDifference };

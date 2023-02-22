@@ -19,9 +19,10 @@ class Controller {
   async execute() {
     let query = null;
     let command = null;
+    let counter = 0;
     const database = new this.Database();
     database.init();
-    if (this.trama.header !== "HS") return "Command not Found !\r\n";
+    if (this.trama.header !== "HS") return "SV,0,0,0,\r\n";
     switch (this.trama.type) {
       case "10":
         const now = new Date();
@@ -45,8 +46,8 @@ class Controller {
         return command;
       case "21":
         query = await database.updateCMD(this.trama);
-        //command = `SV, exitoso,\r\n`;
-        console.log("CMD recepcion Exitosa.")
+        command = 'exitoso';
+        console.log("CMD recepcion Exitosa.");
         return command;
       default:
         return "Command not Found !\r\n";
