@@ -19,7 +19,6 @@ class Controller {
   async execute() {
     let query = null;
     let command = null;
-    let counter = 0;
     const database = new this.Database();
     database.init();
     if (this.trama.header !== "HS") return "SV,0,0,0,\r\n";

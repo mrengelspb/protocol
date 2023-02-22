@@ -8,10 +8,23 @@ class WebService {
   init() {
     this.sockserver = new Server({ port: 3070 });
     this.connections = new Set();
+    let counter = 10;
+    setInterval(()=> {
+      counter--;
+    }, 1000);
+
+    setInterval(()=> {
+      if (counter === 0){
+        process.env.CONTROLLER = false;
+        counter = 10;
+      }
+    }, 1000);
+
     this.sockserver.on('connection', (ws) => {
-      process.env.DATABASE = true;
-      this.connections.add(ws)
+      process.env.CONTROLLER = true;
+      this.connections.add(ws);
       ws.on('message', async (data) => {
+        counter = 10;
         data = data.toString();
         console.log(data);
         const controller = new this.Controller(Database);
@@ -21,16 +34,12 @@ class WebService {
           console.log(response);
           ws.send(response);
         }
-
-        /*connections.forEach((client) => {
-            client.send(JSON.stringify(message));
-            //client.send("Llego mensaje, este es el retorno");
-        })*/
+        counter++;
       });
 
       ws.on('close', () => {
         this.connections.delete(ws);
-        process.env.DATABASE = false;
+        process.env.CONTROLLER = false;
         console.log('Client fue desconectado!');
       });
     });

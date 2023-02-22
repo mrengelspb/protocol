@@ -3,7 +3,8 @@ import '../styles/controllers.css';
 
 export default function Controllers() {
   const [controller, setController] = useState([]);
-  const [ctl, setCtl] = useState([]);
+  const [ctl1, setCtl1] = useState(false);
+  const [ctl2, setCtl2] = useState(false);
   const [DB, setDB] = useState(false);
 
   const handlerController = async () => {
@@ -12,10 +13,12 @@ export default function Controllers() {
       const response = await fetch(url);
       if (response.ok && response.status === 200) {
         const data = await response.json();
-        setCtl(data.c);
+        setCtl1(data.c1);
+        setCtl2(data.c2);
       }
     } catch (error) {
-      setCtl(false);
+      setCtl1(false);
+      setCtl2(false);
     }
   };
 
@@ -145,9 +148,17 @@ export default function Controllers() {
             </div>
           </li>
           <li className="card--info--list--item">
-            <p>Controlador</p>
+            <p>Controlador 2</p>
             <div className="square">
-              {ctl
+              {ctl1
+                ? <div className="on" />
+                : <div className="off" /> }
+            </div>
+          </li>
+          <li className="card--info--list--item">
+            <p>Controlador 1</p>
+            <div className="square">
+              {ctl2
                 ? <div className="on" />
                 : <div className="off" /> }
             </div>

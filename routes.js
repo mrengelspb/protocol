@@ -75,11 +75,11 @@ TicketController.get('/database', async (req, res) => {
 });
 
 TicketController.get('/controller', async (req, res) => {
-  if (process.env.DATABASE == 'true') {
-    res.send({ c: true})
-  } else {
-    res.send({ c: false})
+  const status = {
+    c1: process.env.CONTROLLER1 == 'true' ? true : false,
+    c2: process.env.CONTROLLER2 == 'true' ? true : false,
   }
+  res.send(status);
 });
 
 
