@@ -148,7 +148,7 @@ export default function Controllers() {
             </div>
           </li>
           <li className="card--info--list--item">
-            <p>Controlador 2</p>
+            <p>Controlador 1</p>
             <div className="square">
               {ctl1
                 ? <div className="on" />
@@ -156,7 +156,7 @@ export default function Controllers() {
             </div>
           </li>
           <li className="card--info--list--item">
-            <p>Controlador 1</p>
+            <p>Controlador 2</p>
             <div className="square">
               {ctl2
                 ? <div className="on" />

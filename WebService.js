@@ -9,26 +9,35 @@ class WebService {
     this.sockserver = new Server({ port: 3070 });
     this.connections = new Set();
     let counter = 10;
+    const controller = new this.Controller(Database);
+    
     setInterval(()=> {
       counter--;
     }, 1000);
 
     setInterval(()=> {
       if (counter === 0){
-        process.env.CONTROLLER = false;
+        if (controller.trama.nTerminal === '1') {
+          process.env.CONTROLLER_1 = false;
+        } else if (controller.trama.nTerminal === '2') {
+          process.env.CONTROLLER_2 = false;
+        }
         counter = 10;
       }
     }, 1000);
-
+    
     this.sockserver.on('connection', (ws) => {
-      process.env.CONTROLLER = true;
       this.connections.add(ws);
       ws.on('message', async (data) => {
         counter = 10;
         data = data.toString();
         console.log(data);
-        const controller = new this.Controller(Database);
         controller.makeTrama(data);
+        if (controller.trama.nTerminal === '1') {
+          process.env.CONTROLLER_1 = true;
+        } else if (controller.trama.nTerminal === '2') {
+          process.env.CONTROLLER_2 = true;
+        }
         const response = await controller.execute();
         if (response !== 'exitoso') {
           console.log(response);
@@ -39,7 +48,11 @@ class WebService {
 
       ws.on('close', () => {
         this.connections.delete(ws);
-        process.env.CONTROLLER = false;
+        if (controller.trama.nTerminal === '1') {
+          process.env.CONTROLLER_1 = false;
+        } else if (controller.trama.nTerminal === '2') {
+          process.env.CONTROLLER_2 = false;
+        }
         console.log('Client fue desconectado!');
       });
     });
