@@ -48,6 +48,16 @@ class Controller {
         command = 'exitoso';
         console.log("CMD recepcion Exitosa.");
         return command;
+      case "30":
+        if (this.trama.arg1 === '0x16') {
+          process.env.PRINTER = true;
+          process.env.PRINTER_CODE = 'Ok';
+        } else if (this.trama.arg1 === '0x1e') {
+          process.env.PRINTER = false;
+          process.env.PRINTER_CODE = 'Tapa abierta';
+        }
+        command = 'exitoso';
+        return command;
       default:
         return "Command not Found !\r\n";
     }

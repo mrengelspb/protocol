@@ -5,6 +5,8 @@ export default function Controllers() {
   const [controller, setController] = useState([]);
   const [ctl1, setCtl1] = useState(false);
   const [ctl2, setCtl2] = useState(false);
+  const [printer, setPrinter] = useState(true);
+  const [printerCode, setPrinterCode] = useState('Ok');
   const [DB, setDB] = useState(false);
 
   const handlerController = async () => {
@@ -15,10 +17,13 @@ export default function Controllers() {
         const data = await response.json();
         setCtl1(data.c1);
         setCtl2(data.c2);
+        setPrinter(data.p);
+        setPrinterCode(data.pc);
       }
     } catch (error) {
       setCtl1(false);
       setCtl2(false);
+      printer(false);
     }
   };
 
@@ -105,23 +110,26 @@ export default function Controllers() {
 
   const controllerHTML = controller.map((ctlr) => {
     return (
-      <button
-        id={ctlr.nTerminal}
-        className="loader-circle-93"
-        onClick={handlerClick}
-        key={ctlr.id}
-      >
-        <svg
-          viewBox="0 0 60 60">
-            <circle
-              cx="30"
-              cy="30"
-              r="26"
-              strokeWidth="6"
-              fill="white"
-              />
-        </svg>
-      </button>
+      <div>
+        <h5>Controlador {ctlr.id}</h5>
+        <button
+          id={ctlr.nTerminal}
+          className="loader-circle-93"
+          onClick={handlerClick}
+          key={ctlr.id}
+        >
+          <svg
+            viewBox="0 0 60 60">
+              <circle
+                cx="30"
+                cy="30"
+                r="26"
+                strokeWidth="6"
+                fill="white"
+                />
+          </svg>
+        </button>
+      </div>
     )
   })
 
@@ -159,6 +167,25 @@ export default function Controllers() {
             <p>Controlador 2</p>
             <div className="square">
               {ctl2
+                ? <div className="on" />
+                : <div className="off" /> }
+            </div>
+          </li>
+          <li className="card--info--list--item">
+            <p>Impresora</p>
+            { printer === false ? <div className="card--notification">
+              <div>
+                 <h1>Notificación</h1>
+                 <br />
+                 <br />
+                 <p>Por favor, Verifique su impresora</p>
+                 <br />
+                 <br />
+                 <p>Estado: {printerCode}</p>
+              </div>
+            </div> : <div></div>}
+            <div className="square">
+              {printer
                 ? <div className="on" />
                 : <div className="off" /> }
             </div>

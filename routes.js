@@ -78,6 +78,8 @@ TicketController.get('/controller', async (req, res) => {
   const status = {
     c1: process.env.CONTROLLER_1 == 'true' ? true : false,
     c2: process.env.CONTROLLER_2 == 'true' ? true : false,
+    p: process.env.PRINTER === 'true' ? true : false,
+    pc: process.env.PRINTER_CODE,
   }
   res.send(status);
 });
