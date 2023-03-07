@@ -29,15 +29,17 @@ class Controller {
         this.trama.arg1 = formatDate(now);
         this.trama.arg2 = codeBar;
         const result = await database.insertTicket(this.trama);
-        return `SV,${this.trama.type},${result[0].nTicket},${formatDate(now)}\r\n`;
+        return `SV,${this.trama.type},${result[0].nTicket},${formatDate(now)},\r\n`;
       case "11":
+        this.trama.arg1 = this.trama.arg1.slice(0,12);
         query = await database.findTicket(this.trama);
-        command = `SV,${this.trama.type},${query[0].code},${query[0].status}\r\n`;
-        return command;
+        if (query.length === 0) {
+          return command = `SV,${this.trama.type},${this.trama.arg1},3,\r\n`;
+        }
+        return command = `SV,${this.trama.type},${query[0].code},${query[0].state},\r\n`;
       case "12":
+        this.trama.arg1 = this.trama.arg1.slice(0,12);
         query = await database.finalizeTicket(this.trama);
-        // command = `SV,${this.trama.type},${query[0].code},${query[0].status}\r\n`;
-        // return command;
       case "20":
         query = await database.searchCMD(this.trama);
         if (query.length === 0) return "SV,0,0,0,\r\n";
