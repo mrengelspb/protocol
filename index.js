@@ -1,6 +1,7 @@
 /* Protocol Conection */
 const express = require('express');
 const { WebService } = require('./WebService');
+// const { ScreenServer } = require('./ScreenServer');
 const { Controller } = require('./Controller');
 const cors = require('cors');
 const TicketController = require('./routes');
@@ -9,6 +10,9 @@ require('dotenv').config();
 function RunServer() {
     const webService = new WebService(Controller);
     webService.init();
+
+    // const screenServer = new ScreenServer();
+    // screenServer.init();
 
     const app = express();
     app.use(express.json());
