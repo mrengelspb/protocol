@@ -178,6 +178,7 @@ class Database {
           resolve({ db: true });
         }
       });
+      this.database.end();
     });
   }
 
@@ -188,6 +189,7 @@ class Database {
     return new Promise((resolve, reject) => {
       this.database.query('CALL pa_place_status(?);', [status], (err, result, fields) => {
         if (err) console.log(err);
+        // fix;
         resolve(result[0]);
       });
       this.database.end();
@@ -213,8 +215,8 @@ class Database {
     });
     return new Promise((resolve, reject) => {
       this.database.query('CALL pa_place_update(?, ?);', [number, status], (err, result, fields) => {
-        if (err) reject(err);
-        resolve(result[0]);
+        if (err) console.log(err);
+        resolve(result);
       });
       this.database.end();
     });
