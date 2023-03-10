@@ -1,3 +1,7 @@
+#define ledColorRojo            0x12
+#define ledColorVerde           0x22
+#define ledColorAmarillo        0x32
+
 void MainWindow::envioMensajePanelLed2(int tipoMensaje, int nEspacios){
 
     char tramaPanel[128];
@@ -8,12 +12,46 @@ void MainWindow::envioMensajePanelLed2(int tipoMensaje, int nEspacios){
     QString mensaje;
     QString mensaje2;
 
+    if(tipoMensaje == 0 ){
+        mensaje2.clear();
+        color = 0x22; //0x22
+        auxColor = ledColorVerde;
+        //cntPlazasDisponiblesPLed= nEspacios;
+        d = "LIBRES  ";
+        mensaje2.append(QString::number(parqPuestosDisp-parqPuestosUtilizados));
+    }else if(tipoMensaje ==1){
+        mensaje2.clear();
+        color = 0x22; //0x22
+        auxColor = ledColorVerde;
+        //cntPlazasDisponiblesPLed= nEspacios;
+        mensaje2 = "LIBRES  ";
+        mensaje2.append(QString::number(parqPuestosDisp-parqPuestosUtilizados));
+    }else if(tipoMensaje==2){
+        mensaje2.clear();
+        auxColor = ledColorVerde;
+        color = 0x22; //0x22
+        //cntPlazasDisponiblesPLed= nEspacios;
+        mensaje2 = "LIBRES  ";
+        mensaje2.append(QString::number(parqPuestosDisp-parqPuestosUtilizados));
+    }
+    parqLibres = parqPuestosDisp-parqPuestosUtilizados;
+    if (parqLibres<=0){
+        color = 0x12;
+        auxColor = ledColorRojo;
 
-    char auxColor = ledColorVerde;
-    char color = 0x22; //0x22
-    char auxDatoColor = 136; //152//168
+    }
 
 
+
+    unsigned char auxDatoColor =0; // Verde 152, Rojo 136, Amarillo 168
+
+    if(auxColor == ledColorRojo){
+        auxDatoColor = 136;
+    }else if(auxColor == ledColorVerde){
+        auxDatoColor = 152;
+    }else if(auxColor == ledColorAmarillo){
+        auxDatoColor = 168;
+    }
     QByteArray mensajeArray = mensaje2.toLocal8Bit();
     unsigned int LenMensaje = mensaje2.length();
     // Genero Longitud Trama
@@ -23,8 +61,6 @@ void MainWindow::envioMensajePanelLed2(int tipoMensaje, int nEspacios){
     //Escribo la longitud del paquete
     unsigned int lenPacket = LenMensaje*3 + 10;
     qDebug() << "lenPacket" <<lenPacket<<endl;
-
-
 
     tramaPanel_2[0] = 0xa5; // ID code B1
     tramaPanel_2[1] = 0x30; // ID code B2
@@ -55,8 +91,6 @@ void MainWindow::envioMensajePanelLed2(int tipoMensaje, int nEspacios){
     tramaPanel_2[26] = 0x00;
     tramaPanel_2[27] = LenMensaje + auxDatoColor;//0xb2;
 
-
-
     tramaPanel_2[28] = 0x03;
     tramaPanel_2[29] = 0x00;
     tramaPanel_2[30] = 0x00;
@@ -72,7 +106,6 @@ void MainWindow::envioMensajePanelLed2(int tipoMensaje, int nEspacios){
     tramaPanel_2[40] = 0x00;
     tramaPanel_2[41] = 0x00;
     tramaPanel_2[42] = 0x00;
-    tramaPanel_2[43] = 0x00;
     tramaPanel_2[44] = 0x03;
     tramaPanel_2[45] = 0x00;
     tramaPanel_2[46] = LenMensaje; // Longitud del paquete
@@ -89,8 +122,7 @@ void MainWindow::envioMensajePanelLed2(int tipoMensaje, int nEspacios){
     qDebug() << "checkSumDEC "<<checkSumDEC<<endl;
     int CSLB =  (checkSumDEC & 0xFF00)>>8;
     int CSHB =  (checkSumDEC & 0b0000000011111111);
-    //qDebug() << "CSLB " << CSLB << endl;
-    //qDebug() << "CSHB " << CSHB << endl;
+
 
     tramaPanel_2[datoInicial2+LenMensaje] = CSHB; // estan en 3c --- mensajeArray[LenMensaje-1]
     tramaPanel_2[datoInicial2+LenMensaje+1] = CSLB; // b1 check SUm de Packet Type a  Packet dataLower byte primero
@@ -98,19 +130,15 @@ void MainWindow::envioMensajePanelLed2(int tipoMensaje, int nEspacios){
 
 
     lenTramaPanelLed_2 = datoInicial2 + LenMensaje + 3;
-    qDebug() << "parqPuestosDisp "<<parqPuestosDisp<<endl;
-   // qDebug() << "lenTramaPanelLed_2 "<<lenTramaPanelLed_2<<endl;
-
+   
 
     tcpSocketClientePanel->abort();
     tcpSocketClientePanel->connectToHost("10.45.60.13", 5200);
 
-//    tcpSocketClientePanel->connectToHost("192.168.0.220", 5200);
     tcpSocketClientePanel->waitForConnected(500); //5000
     if(tcpSocketClientePanel->state() == QAbstractSocket::ConnectedState && tcpSocketClientePanel_is_connected) {
         tcpSocketClientePanel->write(&tramaPanel_2[0],lenTramaPanelLed_2);
         tcpSocketClientePanel->flush();
-       // m_console->putData("Mensaje Enviado\r\n");
     }
     tcpSocketClientePanel->abort();
 
