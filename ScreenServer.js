@@ -83,27 +83,15 @@ function screenPrinter(line, color, screen) {
 			trama = trama.concat(packet[key]);
 		}
 	}
-	const res = Buffer.from(trama);
-	const u = new Uint8Array(res);
+	const buffer = Buffer.from(trama);
+	const bytes = new Uint8Array(buffer);
 	const client = new net.Socket();
-	try {
-		client.connect(5200, ip, function () {
-			client.write(u);
-			client.destroy();
-		});
-	} catch (error) {
-		setInterval(() => {
-			client.connect(5200, ip, function () {
-				client.write(u);
-				client.destroy();
-			});
-		}, 3000);
-	}
-	
-	client.on('data', function (data) {
+	client.connect(5200, ip, function () {
+		client.write(bytes);
+		client.destroy();
 	});
-	client.on('close', function () {
-		console.log('Connection closed');
+	client.on('error', () => {
+		console.log("error....");
 	});
 }
 
