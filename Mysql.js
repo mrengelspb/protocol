@@ -31,7 +31,6 @@ class Database {
     this.database.connect((err) => {
       if (err) console.log(err);
     });
-    console.log(args);
     return new Promise((resolve, reject) => {
       this.database.query('CALL pa_ti_finalize(?, ?, ?, ?, ?, ?);', args, (err, result, fields) => {
         if (err) reject(err);
@@ -137,13 +136,11 @@ class Database {
     this.database.connect((err) => {
       if (err) console.log(err);
     });
-    console.log(trama)
     const args = [trama.arg1];
     return new Promise((resolve, reject) => {
       this.database.query('CALL pa_findTicket(?);', args, (err, result, fields) => {
         if (err) reject(err);
         if (result[0].length > 0) {
-          console.log(result[0]);
           const hours = getHourDifference(new Date(result[0].in, new Date()));
           // result[0].time = hours;
           if (hours > 2) result[0].state = 2;
@@ -180,6 +177,44 @@ class Database {
         } else {
           resolve({ db: true });
         }
+      });
+    });
+  }
+
+  getPlacesfree(status) {
+    this.database.connect((err) => {
+      if (err) console.log(err);
+    });
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_place_status(?);', [status], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result[0]);
+      });
+      this.database.end();
+    });
+  }
+
+  getPlacesBySection() {
+    this.database.connect((err) => {
+      if (err) console.log(err);
+    });
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_place_section();', (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result[0]);
+      });
+      this.database.end();
+    });
+  }
+
+  updatePlaceStatus(number, status) {
+    this.database.connect((err) => {
+      if (err) console.log(err);
+    });
+    return new Promise((resolve, reject) => {
+      this.database.query('CALL pa_place_update(?, ?);', [number, status], (err, result, fields) => {
+        if (err) reject(err);
+        resolve(result[0]);
       });
       this.database.end();
     });

@@ -86,10 +86,20 @@ function screenPrinter(line, color, screen) {
 	const res = Buffer.from(trama);
 	const u = new Uint8Array(res);
 	const client = new net.Socket();
-	client.connect(5200, ip, function () {
-		client.write(u);
-		client.destroy();
-	});
+	try {
+		client.connect(5200, ip, function () {
+			client.write(u);
+			client.destroy();
+		});
+	} catch (error) {
+		setInterval(() => {
+			client.connect(5200, ip, function () {
+				client.write(u);
+				client.destroy();
+			});
+		}, 3000);
+	}
+	
 	client.on('data', function (data) {
 	});
 	client.on('close', function () {
@@ -102,9 +112,9 @@ function screenPrinter(line, color, screen) {
 
 exports.screenPrinter = screenPrinter;
 
-screenPrinter("Hola mundo", "red", 1);
-screenPrinter("Hola mundo", "green", 2);
-screenPrinter("Hola mundo", "yellow", 3);
+// screenPrinter("Hola mundo", "red", 1);
+// screenPrinter("Hola mundo", "green", 2);
+// screenPrinter("Hola mundo", "yellow", 3);
 
 
 
