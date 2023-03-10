@@ -45,7 +45,6 @@ function screenPrinter(line, color, screen) {
 	}
 	let buf = Buffer.from(line);
 	let data = new Uint8Array(buf);
-	console.log(data.length);
 	packet.info[4] = data.length + 22 // 23
 	packet.info[4] = packet.info[4].toString("16").padStart(2, "0");
 	packet.info[8] = coloraux1 + data.length;
@@ -92,7 +91,6 @@ function screenPrinter(line, color, screen) {
 		client.destroy();
 	});
 	client.on('data', function (data) {
-		console.log(data.toString());
 	});
 	client.on('close', function () {
 		console.log('Connection closed');
