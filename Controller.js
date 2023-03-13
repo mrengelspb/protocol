@@ -29,8 +29,8 @@ class Controller {
         this.trama.arg1 = formatDate(now);
         this.trama.arg2 = codeBar;
         const result = await database.insertTicket(this.trama);
-        const freePlaces = await database.getPlacesfree(0);
         const place = Math.floor(Math.random() * Math.floor(freePlaces.length));
+        const freePlaces = await database.getPlacesfree(0);
         await database.updatePlaceStatus(freePlaces[place].number, 1);
         return `SV,${this.trama.type},${result[0].nTicket},${formatDate(now)},${freePlaces[place].number},\r\n`;
       case "11":

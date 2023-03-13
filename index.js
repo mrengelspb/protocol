@@ -3,42 +3,42 @@ const express = require('express');
 const { WebService } = require('./WebService');
 const { screenPrinter } = require('./ScreenServer');
 const { Controller } = require('./Controller');
-const { Database } = require('./Mysql');
+const { database } = require('./Mysql');
 
 const cors = require('cors');
 const TicketController = require('./routes');
 require('dotenv').config();
-let flag = false;
 function RunServer() {
     const webService = new WebService(Controller);
-    webService.init();
+    webService.init(database);
 
     const app = express();
     app.use(express.json());
     app.use(cors());
     app.use("/ticket", TicketController);
-    app.listen(3000, () => {console.log("Server running on port: 3000")});
+    app.listen(3001, () => {console.log("Server running on port: 3001")});
 
     setInterval(async () => {
         let avaliablePlaces;
-        const database = new Database();
-        database.init();
         avaliablePlaces = await database.getPlacesBySection();
-        if (flag) {
-            if (avaliablePlaces[0].VAR1 != 0) {
-                screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR1}`, "green", 2);
-            } else {
-                screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR1}`, "red", 2);
-            }
-            flag = false;
+    
+        if (avaliablePlaces[0].VAR1 != 0) {
+            screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR1}`, "green", 2);
         } else {
-            if (avaliablePlaces[0].VAR2 != 0) {
-                screenPrinter(`${avaliablePlaces[0].VAR2} <- LIBRES`, "green", 2);
-            } else {
-                screenPrinter(`${avaliablePlaces[0].VAR2} <- LIBRES`, "red", 2);
-            }
-            flag = true;
+            screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR1}`, "red", 2);
         }
+
+        if (avaliablePlaces[0].VAR2 != 0) {
+            setTimeout(() => {
+                screenPrinter(`${avaliablePlaces[0].VAR2} <- LIBRES`, "green", 2);
+            }, 10000);
+        } else {
+            setTimeout(() => {
+                screenPrinter(`${avaliablePlaces[0].VAR2} <- LIBRES`, "red", 2);
+            }, 10000);
+        }
+
+
         if (avaliablePlaces[0].VAR3 != 0) {
             screenPrinter(`${avaliablePlaces[0].VAR3} <- LIBRES`, "green", 3);
         } else {
