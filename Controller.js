@@ -5,7 +5,7 @@ class Controller {
   fields = ['header', 'type', 'serialTerminal', 'codeParking', 'nTerminal', 'arg1', 'arg2'];
   
   constructor (Database) {
-    this.Database = Database;
+    this.database = Database;
   }
 
   makeTrama(data) {
@@ -19,8 +19,6 @@ class Controller {
   async execute() {
     let query = null;
     let command = null;
-    const database = new this.Database();
-    database.init();
     if (this.trama.header !== "HS") return "SV,0,0,0,\r\n";
     switch (this.trama.type) {
       case "10":
@@ -28,28 +26,39 @@ class Controller {
         const codeBar = codeBarGenerator(this.trama.nTerminal, now);
         this.trama.arg1 = formatDate(now);
         this.trama.arg2 = codeBar;
-        const result = await database.insertTicket(this.trama);
-        const place = Math.floor(Math.random() * Math.floor(freePlaces.length));
-        const freePlaces = await database.getPlacesfree(0);
-        await database.updatePlaceStatus(freePlaces[place].number, 1);
+        console.log(this.trama.arg1);
+        console.log(this.trama.arg2);
+        const freePlaces = await this.database.getPlacesfree(0);
+        let place;
+        let result;
+        if (freePlaces == 0) {
+          freePlaces = [{ number: 0 }]
+          place = 0;
+        } else {
+          place = Math.floor(Math.random() * Math.floor(freePlaces.length));
+          this.database.updatePlaceStatus(freePlaces[place].number);
+          result = await this.database.insertTicket(this.trama, freePlaces[place].number );
+        }
         return `SV,${this.trama.type},${result[0].nTicket},${formatDate(now)},${freePlaces[place].number},\r\n`;
       case "11":
         this.trama.arg1 = this.trama.arg1.slice(0,12);
-        query = await database.findTicket(this.trama);
+        query = await this.database.findTicket(this.trama);
         if (query.length === 0) {
           return command = `SV,${this.trama.type},${this.trama.arg1},3,\r\n`;
         }
         return command = `SV,${this.trama.type},${query[0].code},${query[0].state},\r\n`;
       case "12":
         this.trama.arg1 = this.trama.arg1.slice(0,12);
-        query = await database.finalizeTicket(this.trama);
+        query = await this.database.finalizeTicket(this.trama);
       case "20":
-        query = await database.searchCMD(this.trama);
+        this.trama.arg1 = "2020-10-10 20:39:21";
+        this.trama.arg2 = "123456789123";
+        query = await this.database.searchCMD(this.trama);
         if (query.length === 0) return "SV,0,0,0,\r\n";
         command = `SV,${this.trama.type},${query[0].id},${query[0].description},\r\n`;
         return command;
       case "21":
-        query = await database.updateCMD(this.trama);
+        query = await this.database.updateCMD(this.trama);
         command = 'exitoso';
         console.log("CMD recepcion Exitosa.");
         return command;
