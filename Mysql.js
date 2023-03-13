@@ -13,7 +13,7 @@ class Database {
       host: 'localhost',
       user: 'root',
       database: 'sch_spbfaraday',
-      password: 'root',
+      password: 'Solucionespb2.', // root 
     });
     this.database.connect((err) => {
       console.log(err);
