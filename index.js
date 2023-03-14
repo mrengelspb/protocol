@@ -21,7 +21,7 @@ function RunServer() {
     setInterval(async () => {
         let avaliablePlaces;
         avaliablePlaces = await database.getPlacesBySection();
-    
+
         if (avaliablePlaces[0].VAR1 != 0) {
             screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR1}`, "green", 2);
         } else {
@@ -37,7 +37,6 @@ function RunServer() {
                 screenPrinter(`${avaliablePlaces[0].VAR2} <- LIBRES`, "red", 2);
             }, 10000);
         }
-
 
         if (avaliablePlaces[0].VAR3 != 0) {
             screenPrinter(`${avaliablePlaces[0].VAR3} <- LIBRES`, "green", 3);

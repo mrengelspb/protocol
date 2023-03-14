@@ -1,23 +1,21 @@
 const Mysql = require('mysql2');
 const { formatDate, addMinutes, getHourDifference } = require('./Helpers');
 
-class Database {
-  constructor () {
-    if (Database._instance) {
-      return Database._instance;
-    }
-    Database._instance = this;
-  }
-  init() {
-    this.database = Mysql.createConnection({
+class MySQL {
+  open() {
+    this.connection = Mysql.createConnection({
       host: 'localhost',
       user: 'root',
       database: 'sch_spbfaraday',
       password: 'Solucionespb2.', // root 
     });
-    this.database.connect((err) => {
-      console.log(err);
+    this.connection.connect((err) => {
+      if (err) console.log(err);
     });
+  }
+
+  close() {
+    this.connection.end();
   }
 
   spacesTicket() {
@@ -55,13 +53,14 @@ class Database {
   }
 
   insertTicket(trama, place) {
+    this.open();
     const args =  [1, trama.nTerminal, trama.arg1, trama.arg2, trama.codeParking, place];
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_controller_v2(?,?,?,?,?,?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_controller_v2(?,?,?,?,?,?);', args, (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0]);
       });
-    
+    this.close();
     })
   }
 
@@ -165,12 +164,13 @@ class Database {
   }
 
   getPlacesfree(status) {
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_place_status(?);', [status], (err, result, fields) => {
+      this.connection.query('CALL pa_place_status(?);', [status], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0])
       });
-    
+    this.close();
     });
   }
 
@@ -185,15 +185,15 @@ class Database {
   }
 
   updatePlaceStatus(number) {
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_place_update(?);', [number], (err, result, fields) => {
+      this.connection.query('CALL pa_place_update(?);', [number], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result);
       });
-    
+    this.close();
     });
   }
 }
-const database = new Database();
-database.init();
-exports.database = database;
+
+exports.MySQL = MySQL;
