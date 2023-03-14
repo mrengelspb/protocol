@@ -1,7 +1,7 @@
 /* Protocol Conection */
 const express = require('express');
 const { WebService } = require('./WebService');
-const { screenPrinter } = require('./ScreenServer');
+const { screenPrinter } = require('./ScreenClient');
 const { Controller } = require('./Controller');
 const { database } = require('./Mysql');
 

@@ -18,15 +18,15 @@ class WebService {
     }, 1000);
 
     setInterval(()=> {
-        if (counterA === 0 && controller.trama.nTerminal !== '1') {
-          process.env.CONTROLLER_1 = false;
-          counterA = 10;
-        } else if (counterB === 0 && controller.trama.nTerminal !== '2') {
-          process.env.CONTROLLER_2 = false;
-          counterB = 10;
-        }
+      if (counterA === 0 && controller.trama.nTerminal !== '1') {
+        process.env.CONTROLLER_1 = false;
+        counterA = 10;
+      } else if (counterB === 0 && controller.trama.nTerminal !== '2') {
+        process.env.CONTROLLER_2 = false;
+        counterB = 10;
+      }
     }, 1000);
-    
+
     this.sockserver.on('connection', (ws) => {
       this.connections.add(ws);
       ws.on('message', async (data) => {
