@@ -63,6 +63,8 @@ class PlotV2 {
           process.env.PRINTER_CODE = 'Tapa abierta';
         }
         return this.command = 'exitoso';
+      case "40":
+        
       default:
         return "Command not Found !\r\n";
     }
