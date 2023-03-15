@@ -16,5 +16,5 @@ ws.on('message', function message(data) {
 });
 
 input.on('data', (data) => {
-    ws.send(data);
+  ws.send(data);
 });

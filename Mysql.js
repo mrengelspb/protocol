@@ -19,42 +19,45 @@ class MySQL {
   }
 
   spacesTicket() {
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_ti_spaces();', (err, result, fields) => {
+      this.connection.query('CALL pa_ti_spaces();', (err, result, fields) => {
         if (err) {
           console.log(err);
         } else {
           resolve(result[0]);
         }
       });
-    
+      this.close();
     });
   }
 
   updateTicket(args) {
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_ti_finalize(?, ?, ?, ?, ?, ?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_ti_finalize(?, ?, ?, ?, ?, ?);', args, (err, result, fields) => {
         if (err) reject(err);
         resolve(result);
       });
-    
+      this.close();
     });
   }
 
   getTicket(id) {
+    this.open();
     const args = [id];
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_ti_search(?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_ti_search(?);', args, (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0]);
       });
-    
+    this.close();
     })
   }
 
   insertTicket(trama, place) {
     this.open();
-    const args =  [1, trama.nTerminal, trama.arg1, trama.arg2, trama.codeParking, place];
+    const args =  [1, trama[3], trama.arg1, trama.arg2, trama[2], place];
     return new Promise((resolve, reject) => {
       this.connection.query('CALL pa_controller_v2(?,?,?,?,?,?);', args, (err, result, fields) => {
         if (err) console.log(err);
@@ -65,45 +68,49 @@ class MySQL {
   }
 
   searchCMD(trama) {
-    const args =  [2, trama.nTerminal, trama.arg1,  trama.arg2, trama.codeParking];
+    this.open();
+    const args =  [2, trama[3], trama.arg1,  trama.arg2, trama[2]];
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_controller_v1(?,?,?,?,?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_controller_v1(?,?,?,?,?);', args, (err, result, fields) => {
         if (err) {
           console.log(err);
         } else {
           resolve(result[0]);
         }
       });
-    
+      this.close();
     });
   }
 
   updateCMD(trama) {
+    this.open();
     const args =  [trama.arg1];
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_updateCMD(?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_updateCMD(?);', args, (err, result, fields) => {
         if (err) reject(err);
         resolve(result);
       });
-    
+      this.close();
     });
   }
 
 
   insertCommand(nterminal, command, status, id_parking) {
+    this.open();
     const args =  [nterminal, command, status, id_parking];
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_insertCommand(?,?,?,?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_insertCommand(?,?,?,?);', args, (err, result, fields) => {
         if (err) reject(err);
         resolve(result[0]);
       });
-    
+      this.close();
     });
   }
 
   loadController() {
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_ct_load();', (err, result, fields) => {
+      this.connection.query('CALL pa_ct_load();', (err, result, fields) => {
         if (err) reject(err);
         if (result[0].length > 0) {
           resolve(result[0]);
@@ -111,15 +118,16 @@ class MySQL {
           resolve([]);
         }
       });
-    
+      this.close();
     });
   }
 
   findTicket(trama) {
     const args = [trama.arg1];
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_findTicket(?);', args, (err, result, fields) => {
-        if (err) reject(err);
+      this.connection.query('CALL pa_findTicket(?);', args, (err, result, fields) => {
+        if (err) console.log(err);
         if (result[0].length > 0) {
           const hours = getHourDifference(new Date(result[0].in, new Date()));
           result[0].time = hours;
@@ -133,33 +141,34 @@ class MySQL {
           resolve([]);
         }
       });
-    
+    this.close();
     });
   }
 
   finalizeTicket(trama) {
     const now = new Date();
     const args = [trama.arg1, formatDate(now), formatDate(addMinutes(now, 10)), 3];
-    console.log(args)
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_finalizeTicket(?,?,?,?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_finalizeTicket(?,?,?,?);', args, (err, result, fields) => {
         if (err) reject(err);
         resolve(result);
       });
-    
+      this.close();
     });
   }
 
   status() {
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.ping((err) => {
+      this.connection.ping((err) => {
         if (err) {
           resolve({ db: false });
         } else {
           resolve({ db: true });
         }
       });
-    
+      this.close();
     });
   }
 
@@ -175,12 +184,13 @@ class MySQL {
   }
 
   getPlacesBySection() {
+    this.open();
     return new Promise((resolve, reject) => {
-      this.database.query('CALL pa_place_section();', (err, result, fields) => {
+      this.connection.query('CALL pa_place_section();', (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0]);
       });
-    
+    this.close();
     });
   }
 

@@ -31,6 +31,7 @@ class Socket {
         try {
           response = await this.plot.execute();
         } catch (error) {
+          console.log(error);
           response = "Server Error reconnecting...";
           process.env.OCTUPUS = 'down';
         }

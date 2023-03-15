@@ -9,6 +9,7 @@ protocol.openPort({ adapter: Socket, port: 3070, type: 'ws' });
 
 setImmediate(() => {
     if (process.env.OCTUPUS === 'down') {
+        process.env.OCTUPUS = 'Ok';
         protocol.openPort({ adapter: Socket, port: 3070, type: 'ws' });
     }
 });
