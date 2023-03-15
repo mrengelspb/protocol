@@ -8,7 +8,7 @@ class Socket {
     this.connections = new Set();
     this.counterA = 10;
     this.counterB = 10;
-    this.plot = new PlotV1(this.database);
+    this.plot = new PlotV1(database);
     this.database = database;
     //this.controller = new Controller(database);
   }
