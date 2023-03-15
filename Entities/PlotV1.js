@@ -2,9 +2,13 @@ class PlotV1 {
     trama  = {};
     fields = ['header', 'type', 'serialTerminal', 'codeParking', 'nTerminal', 'arg1', 'arg2'];
 
-    constructor(data, connection) {
+    constructor(connection) {
         this.connection = connection;
-        data = data.slice(0, data.indexOf('\\r\\n')) + '\\r\\n';
+        
+    }
+
+    makeTrama(data) {
+      data = data.slice(0, data.indexOf('\\r\\n')) + '\\r\\n';
         const listArgs = data.split(',');
         for (let i  = 0; i < this.fields.length; i++) {
           this.trama[this.fields[i]] = listArgs[i];
