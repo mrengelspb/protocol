@@ -1,4 +1,4 @@
-const { codeBarGenerator, formatDate } = require('../Helpers');
+const { codeBarGenerator, isExpirate, formatDate } = require('../Helpers');
 
 class PlotV2 {
   query = null;
@@ -11,8 +11,9 @@ class PlotV2 {
 
   makeTrama(line) {
     line = line.toString();
-    line = line.slice(0, line.indexOf('\\r\\n')) + '\\r\\n';
+    line = line.slice(0, line.indexOf('\r\n'));
     this.trama = line.split(',');
+    console.log(this.trama);
   }
 
   async execute() {
@@ -64,13 +65,48 @@ class PlotV2 {
         }
         return this.command = 'exitoso';
       case "40":
-        
+        this.status;
+        this.since;
+        this.to;
+        this.query = await this.database.readTag(this.trama);
+        if (this.query.length === 0) {
+          this.status = 2;
+        } else {
+          this.since = new Date(this.query[0].since);
+          this.to = new Date(this.query[0].to);
+          if (isExpirate(since, to)) {
+            this.query = await this.database.updateTag(this.trama);
+            this.status = 1;
+          } else {
+            this.status = this.query[0].status
+          }
+        }
+        return this.command = `SV,40,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
+      case "60":
+        this.status;
+        this.since;
+        this.to;
+        this.query = await this.database.readCard(this.trama);
+        if (this.query.length === 0) {
+          this.status = 2;
+        } else {
+          this.since = new Date(this.query[0].since);
+          this.to = new Date(this.query[0].to);
+          if (isExpirate(since, to)) {
+            this.query = await this.database.updateTag(this.trama);
+            this.status = 1;
+          } else {
+            this.status = this.query[0].status;
+          }
+        }
+        return this.command = `SV,50,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
       default:
         return "Command not Found !\r\n";
     }
   }
-  
+
   showTrama() {
+    
     return this.trama.join(',');
   }
 }

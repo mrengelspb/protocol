@@ -4,10 +4,10 @@ const { formatDate, addMinutes, getHourDifference } = require('./Helpers');
 class MySQL {
   open() {
     this.connection = Mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      database: 'sch_spbfaraday',
-      password: 'Solucionespb2.', // root 
+      host: '34.75.110.6',
+      user: 'uspb-cidev01',
+      database: 'sch_spbmaxweb',
+      password: 'Solucionespb2.', // root
     });
     this.connection.connect((err) => {
       if (err) console.log(err);
@@ -84,7 +84,7 @@ class MySQL {
 
   updateCMD(trama) {
     this.open();
-    const args =  [trama.arg1];
+    const args =  [trama[4]];
     return new Promise((resolve, reject) => {
       this.connection.query('CALL pa_updateCMD(?);', args, (err, result, fields) => {
         if (err) reject(err);
@@ -198,6 +198,61 @@ class MySQL {
     this.open();
     return new Promise((resolve, reject) => {
       this.connection.query('CALL pa_place_update(?);', [number], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result);
+      });
+    this.close();
+    });
+  }
+  
+  updateTag(trama) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_tag_status(?, ?);', [1, trama[4]], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result);
+      });
+    this.close();
+    });
+  }
+
+  readTag(trama) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_tag_get(?);', [trama[4]], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result[0]);
+      });
+    this.close();
+    });
+  }
+
+  exitTag(trama) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL ;', [], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result);
+      });
+    this.close();
+    });
+  }
+
+  insertCard(trama) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL ;', [], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result);
+      });
+    this.close();
+    });
+  }
+
+  exitCard(trama) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL ;', [], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result);
       });

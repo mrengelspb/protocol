@@ -7,6 +7,9 @@ class Protocol {
     } else if (config.type === 'ws') {
       this.socket = new config.adapter(this.database);
       this.socket.init();
+    } else if (config.type === 'tcp') {
+      this.tcp = new config.adapter(this.database);
+      this.tcp.init();
     } else {
       console.log('Error: No se ha encontrado el tipo de puerto a abrir.')
     }

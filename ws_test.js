@@ -16,7 +16,8 @@ ws.on('message', function message(data) {
 });
 
 input.on('data', (data) => {
-  setInterval(() => {
-    ws.send('HS,20,14,1,\r\n');
-  }, 100);
+  ws.send(data);
+  // setInterval(() => {
+  //   ws.send('HS,20,14,1,\r\n');
+  // }, 100);
 });

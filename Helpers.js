@@ -62,4 +62,11 @@ function codeBarGenerator(nTerminal, now) {
   return `${nTerminal}${year}${julian_day}${hour}${minutes}${seconds}`;
 }
 
-module.exports = { codeBarGenerator, formatDate, addMinutes, getHourDifference };
+function isExpirate (since, to) {
+  const sinceT = since.getTime();
+  const toT = to.getTime();
+  if (sinceT < toT) return false;
+  return true;
+}
+
+module.exports = { codeBarGenerator, isExpirate, formatDate, addMinutes, getHourDifference };

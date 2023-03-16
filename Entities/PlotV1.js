@@ -1,10 +1,11 @@
+const { codeBarGenerator, isExpirate, formatDate } = require('../Helpers');
+
 class PlotV1 {
     trama  = {};
     fields = ['header', 'type', 'serialTerminal', 'codeParking', 'nTerminal', 'arg1', 'arg2'];
 
     constructor(connection) {
         this.connection = connection;
-        
     }
 
     makeTrama(data) {
@@ -72,6 +73,9 @@ class PlotV1 {
         default:
           return "Command not Found !\r\n";
       }
+    }
+    showTrama() {
+      return this.trama;
     }
   }
   
