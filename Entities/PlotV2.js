@@ -1,4 +1,4 @@
-const { codeBarGenerator, isExpirate, formatDate } = require('../Helpers');
+const { codeBarGenerator, getHourDifference, isExpirate, formatDate, calculateTotal } = require('../Helpers');
 
 class PlotV2 {
   query = null;
@@ -46,6 +46,11 @@ class PlotV2 {
       case "12":
         this.trama.arg1 = this.trama[4].slice(0, 12);
         this.query = await this.database.finalizeTicket(this.trama);
+      case "13":
+        this.trama.arg1 = this.trama[4].slice(0, 12);
+        this.query = await this.database.getStateTicket(this.trama);
+        if (this.query.length === 0) return this.command = `SV,${this.trama[1]},${this.trama.arg1},4,\r\n`;
+        return this.command = `SV,${this.trama[1]},${this.query[0].code},${this.query[0].state},\r\n`;
       case "20":
         this.trama.arg1 = "2020-10-10 20:39:21";
         this.trama.arg2 = "123456789123";
@@ -74,19 +79,23 @@ class PlotV2 {
         } else {
           this.since = new Date(this.query[0].since);
           this.to = new Date(this.query[0].to);
-          if (isExpirate(since, to)) {
-            this.query = await this.database.updateTag(this.trama);
-            this.status = 1;
-          } else {
-            this.status = this.query[0].status
+          if (this.query[0].type === "m") {
+            if (isExpirate(this.since, this.to)) {
+              this.query = await this.database.updateTag(this.trama);
+              this.status = 1;
+            } else {
+              this.status = this.query[0].status
+            }
+          } else if (this.query[0], type === "ps") {
+            
           }
         }
         return this.command = `SV,40,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
-      case "60":
+      case "41":
         this.status;
         this.since;
         this.to;
-        this.query = await this.database.readCard(this.trama);
+        this.query = await this.database.readTag(this.trama);
         if (this.query.length === 0) {
           this.status = 2;
         } else {
@@ -96,10 +105,62 @@ class PlotV2 {
             this.query = await this.database.updateTag(this.trama);
             this.status = 1;
           } else {
-            this.status = this.query[0].status;
+            this.status = this.query[0].status
+            const minutes = getHourDifference(since, to);
+            console.log(this.query, minutes);
           }
         }
-        return this.command = `SV,50,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
+        return this.command = `SV,40,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
+      case "60":
+        this.status;
+        this.since;
+        this.to;
+        this.query = await this.database.readCard(this.trama);
+        console.log(this.query)
+        if (this.query.length === 0) {
+          this.status = 3;
+        } else {
+          this.since = new Date(this.query[0].since);
+          this.to = new Date(this.query[0].to);
+          if (this.query[0].type === "m") {
+            if (isExpirate(this.since, this.to)) {
+              await this.database.updateCard(6, this.trama);
+              this.status = 6;
+            } else {
+              this.status = this.query[0].status;
+            }
+          } else if (this.query[0].type == "ps") {
+            if (this.query[0].saldo > 0) {
+              this.status = this.query[0].state;
+            }
+          }
+          
+        }
+        return this.command = `SV,60,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
+      case "61":
+        this.status;
+        this.since;
+        this.to;
+        this.query = await this.database.readCard(this.trama);
+        if (this.query.length === 0) {
+          this.status = 3;
+        } else {
+          this.since = new Date(this.query[0].since);
+          this.to = new Date(this.query[0].to);
+          if (this.query[0].type === "m") {
+            if (isExpirate(this.since, this.to)) {
+              this.query = await this.database.updateCard(6, this.trama);
+              this.status = 6;
+            } else {
+              this.status = this.query[0].status;
+            }
+          } else if (this.query[0].type === "ps") {
+            const tariffs = await this.database.getTariifs(this.trama);
+            const total = calculateTotal(this.query[0], tariffs, 0);
+            console.log(total);
+          }
+        }
+        return this.command = `SV,61,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
       default:
         return "Command not Found !\r\n";
     }

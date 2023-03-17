@@ -94,7 +94,6 @@ class MySQL {
     });
   }
 
-
   insertCommand(nterminal, command, status, id_parking) {
     this.open();
     const args =  [nterminal, command, status, id_parking];
@@ -227,21 +226,44 @@ class MySQL {
     });
   }
 
-  exitTag(trama) {
+  readCard(trama) {
     this.open();
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL ;', [], (err, result, fields) => {
+      this.connection.query('CALL pa_card_get(?);', [trama[4]], (err, result, fields) => {
         if (err) console.log(err);
-        resolve(result);
+        resolve(result[0]);
       });
     this.close();
     });
   }
 
-  insertCard(trama) {
+  getTariifs(trama) {
     this.open();
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL ;', [], (err, result, fields) => {
+      this.connection.query('CALL pa_pt_getTariff(?);', [trama[2]], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result[0]);
+      });
+    this.close();
+    });
+  }
+
+  getStateTicket(trama) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_tk_getTicketState(?, ?);', [trama.arg1, 2], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result[0]);
+      });
+    this.close();
+    });
+  }
+
+  updateCard(state, trama) {
+    const now = new Date();
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_card_status(?, ?, ?);', [state, trama[4], formatDate(now)], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result);
       });
@@ -252,9 +274,9 @@ class MySQL {
   exitCard(trama) {
     this.open();
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL ;', [], (err, result, fields) => {
+      this.connection.query('CALL pa_tk_getTicketState(?, ?);', [trama[4], 2], (err, result, fields) => {
         if (err) console.log(err);
-        resolve(result);
+        resolve(result[0]);
       });
     this.close();
     });

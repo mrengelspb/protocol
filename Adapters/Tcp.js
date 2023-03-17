@@ -7,20 +7,21 @@ class Tcp {
     this.server = net.createServer();
     this.counterA = 10;
     this.counterB = 10;
-    this.plot = new PlotV1(database);
+    this.plot = new PlotV2(database);
     this.database = database;
     //this.controller = new Controller(database);
   }
   init() {
     this.server.on('connection', (socket) => {
         socket.on('data', async (line) => {
-            if (line.toString() === "SPB,Faraday,V2,\r\n") {
+          console.log(line.toString());
+            if (line.toString() === "SPB,Faraday,V2,\r\n" || line.toString() === "SPB,Faraday,V2,\\r\\n") {
                 this.plot = new PlotV2(this.database);
-                socket.write("Octupus,V2,Faraday,\r\n");
+                socket.write("SV,Octupus,V2,Faraday,\r\n");
                 return;
               } else if (line.toString() === "SPB,Faraday,V1,\r\n") {
                 this.plot = new PlotV1(this.database);
-                socket.write("Octupus,V1,Faraday,\r\n");
+                socket.write("SV,Octupus,V1,Faraday,\r\n");
               }
               try {
                 this.plot.makeTrama(line);
@@ -50,7 +51,12 @@ class Tcp {
               //   console.log(response);
               //   ws.send(response);
               // }
+              console.log(response);
               socket.write(response);
+        });
+        socket.on('error', (err) => {
+            console.log('Error: Client Desconnected... ', err.message);
+            process.env.OCTUPUS = 'down';
         });
     });
 
@@ -66,6 +72,7 @@ class Tcp {
         // }
             console.log('Client was disconnected!');
         });
+
     this.server.on('error', (err) => {
         console.log('Error: Holi mundo ', err.message);
         process.env.OCTUPUS = 'down';

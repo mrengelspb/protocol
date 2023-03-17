@@ -69,4 +69,65 @@ function isExpirate (since, to) {
   return true;
 }
 
-module.exports = { codeBarGenerator, isExpirate, formatDate, addMinutes, getHourDifference };
+function getMinutesDiff(date1, date2) {
+  const diffInMs = Math.abs(date2.getTime() - date1.getTime());
+  return Math.floor(diffInMs / (1000 * 60));
+}
+
+function padZeros(number) {
+  const factor = 10**2;
+  const rounded = Math.round(number * factor) / factor;
+  const parts = rounded.toString().split('.');
+  const decimalPart = parts.length > 1 ? parts[1] : '';
+  const zeros = '0'.repeat(2 - decimalPart.length);
+  if (parts.length === 1) return `${rounded}.${zeros}`;
+  return `${rounded}${zeros}`;
+}
+
+
+function calculateTotal(otc, listTariff, tariff) {
+  let total = 0;
+  const trf = listTariff.find((t) => t.id === parseInt(tariff));
+  const fractions = trf.f;
+  otc.in_ = otc.in;
+  otc.out_ = otc.out;
+  if (process.env.REACT_APP_ENV === 'dev') {
+    otc.time = getMinutesDiff(new Date(otc.out_), new Date(otc.in_.replace('Z', '+05:00')));
+  } else {
+    otc.time = Math.round(((new Date(otc.out) - new Date(otc.in)) / 1000) / 60);
+  }
+  if (process.env.REACT_APP_ENV === 'dev') {
+    otc.in = new Date(otc.in.replace('Z', '+05:00')).toLocaleString();
+  } else {
+    otc.in = new Date(otc.in).toLocaleString();
+  }
+  otc.out = new Date(otc.out).toLocaleString();
+
+  if (otc.time > 60) {
+    const hours = parseInt(otc.time / 60);
+    const minutes = otc.time % 60;
+    total = hours * trf.v_hour;
+    total = parseFloat(total.toFixed(2));
+    if (minutes > 1) {
+      const fraction = fractions.find((f) => minutes >= f.start && minutes <= f.end);
+      total += fraction.value;
+    }
+  }
+  if (otc.time <= 60) {
+    const fraction = fractions.find((f) => otc.time >= f.start && otc.time <= f.end);
+    total += fraction.value;
+  }
+  return padZeros(total);
+}
+
+
+module.exports = {
+  codeBarGenerator,
+  isExpirate,
+  formatDate,
+  addMinutes,
+  getHourDifference,
+  getMinutesDiff,
+  calculateTotal,
+  padZeros
+};
