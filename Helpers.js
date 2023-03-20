@@ -34,7 +34,6 @@ function getJulianDay(date) {
   return julianDay;
 }
 
-
 function zeroPad(num, places) {
   num = num.toString();
   var zerosToPad = places - num.length;
@@ -45,7 +44,6 @@ function zeroPad(num, places) {
   }
   return num;
 }
-
 
 function codeBarGenerator(nTerminal, now) {
   const year = now.getFullYear()- 2000; // YYYY
@@ -83,7 +81,6 @@ function padZeros(number) {
   if (parts.length === 1) return `${rounded}.${zeros}`;
   return `${rounded}${zeros}`;
 }
-
 
 function calculateTotal(otc, listTariff, tariff) {
   let total = 0;

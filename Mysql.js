@@ -237,10 +237,21 @@ class MySQL {
     });
   }
 
-  getTariifs(trama) {
+  getTariffs(trama) {
     this.open();
     return new Promise((resolve, reject) => {
       this.connection.query('CALL pa_pt_getTariff(?);', [trama[2]], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result[0]);
+      });
+    this.close();
+    });
+  }
+
+  getFractions(code) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_pt_getFraction(?);', [code], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0]);
       });
@@ -264,6 +275,17 @@ class MySQL {
     this.open();
     return new Promise((resolve, reject) => {
       this.connection.query('CALL pa_card_status(?, ?, ?);', [state, trama[4], formatDate(now)], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result);
+      });
+    this.close();
+    });
+  }
+
+  updateSaldo(id, saldo) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_card_saldo(?, ?);', [id, saldo], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result);
       });

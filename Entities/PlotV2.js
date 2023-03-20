@@ -131,6 +131,7 @@ class PlotV2 {
             }
           } else if (this.query[0].type == "ps") {
             if (this.query[0].saldo > 0) {
+              await this.database.updateCard(6, this.trama);
               this.status = this.query[0].state;
             }
           }
@@ -155,9 +156,18 @@ class PlotV2 {
               this.status = this.query[0].status;
             }
           } else if (this.query[0].type === "ps") {
-            const tariffs = await this.database.getTariifs(this.trama);
-            const total = calculateTotal(this.query[0], tariffs, 0);
-            console.log(total);
+            const tariffs = await this.database.getTariffs(this.trama);
+            const fractions = await this.database.getFractions(tariffs[0].code_fraction);
+            tariffs[0].f = fractions;
+            this.query[0].out = formatDate(new Date());
+            const total = calculateTotal(this.query[0], tariffs, "4");
+            const saldo = this.query[0].saldo - total;
+            if (saldo > 0) {
+              this.status = 5;
+            } else {
+              this.status = 6;
+            }
+            await this.database.updateSaldo(this.query[0].id, saldo);
           }
         }
         return this.command = `SV,61,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
@@ -167,7 +177,6 @@ class PlotV2 {
   }
 
   showTrama() {
-    
     return this.trama.join(',');
   }
 }
