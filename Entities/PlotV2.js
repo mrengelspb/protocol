@@ -27,16 +27,7 @@ class PlotV2 {
         const codeBar = codeBarGenerator(this.trama[3], now);
         this.trama.arg1 = formatDate(now);
         this.trama.arg2 = codeBar;
-        let freePlaces = await this.database.getPlacesfree(0);
-        if (freePlaces == 0) {
-          freePlaces = [{ number: 0 }];
-          place = 0;
-          return `SV,10,0,${formatDate(now)},0,\r\n`;
-        } else {
-          place = Math.floor(Math.random() * Math.floor(freePlaces.length));
-          this.database.updatePlaceStatus(freePlaces[place].number);
-          result = await this.database.insertTicket(this.trama, freePlaces[place].number);
-        }
+        result = await this.database.insertTicket(this.trama, 0);
         return `SV,${this.trama[1]},${result[0].nTicket},${formatDate(now)},${freePlaces[place].number},\r\n`;
       case "11":
         this.trama.arg1 = this.trama[4].slice(0, 12);
