@@ -57,9 +57,9 @@ class MySQL {
 
   insertTicket(trama, place) {
     this.open();
-    const args =  [1, trama[3], trama.arg1, trama.arg2, trama[2], place];
+    const args =  [1, trama[3], trama.arg1, trama.arg2, trama[2], place, 13];
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL pa_controller_v2(?,?,?,?,?,?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_controller_v2(?,?,?,?,?,?,?);', args, (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0]);
       });
@@ -204,10 +204,10 @@ class MySQL {
     });
   }
   
-  updateTag(trama) {
+  updateTag(status, trama) {
     this.open();
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL pa_tag_status(?, ?);', [1, trama[4]], (err, result, fields) => {
+      this.connection.query('CALL pa_tag_status(?, ?, ?);', [status, trama[4], formatDate(new Date())], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result);
       });
@@ -282,10 +282,10 @@ class MySQL {
     });
   }
 
-  updateSaldo(id, saldo) {
+  updateSaldo(type, id, saldo) {
     this.open();
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL pa_card_saldo(?, ?);', [id, saldo], (err, result, fields) => {
+      this.connection.query('CALL pa_saldo(?, ?, ?);', [type, id, saldo], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result);
       });
@@ -293,10 +293,10 @@ class MySQL {
     });
   }
 
-  exitCard(trama) {
+  logCard(args) {
     this.open();
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL pa_tk_getTicketState(?, ?);', [trama[4], 2], (err, result, fields) => {
+      this.connection.query('CALL pa_ca_updateCardByCode(?,?,?,?,?,?,?,?,?);', [args], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0]);
       });
