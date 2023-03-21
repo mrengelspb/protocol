@@ -121,6 +121,7 @@ function calculateTotal(otc, listTariff, tariff) {
 module.exports = {
   codeBarGenerator,
   isExpirate,
+  zeroPad,
   formatDate,
   addMinutes,
   getHourDifference,

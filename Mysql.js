@@ -314,6 +314,17 @@ class MySQL {
     this.close();
     });
   }
+
+  getPrinter(parking) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_printer_get(?);', [parking], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result[0]);
+      });
+    this.close();
+    });
+  }
 }
 
 exports.MySQL = MySQL;

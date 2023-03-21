@@ -1,4 +1,4 @@
-const { codeBarGenerator, getHourDifference, isExpirate, formatDate, calculateTotal } = require('../Helpers');
+const { codeBarGenerator, getHourDifference, isExpirate, formatDate, calculateTotal, zeroPad } = require('../Helpers');
 const { exec } = require("child_process");
 
 class PlotV2 {
@@ -32,7 +32,10 @@ class PlotV2 {
         let place = "Soluciones Plan B";
         if (this.trama[2] == 12) place = "Ucacue Azogues";
         result = await this.database.insertTicket(this.trama, 0);
-        const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "TSP_OF_1_1" "5" "NA" "jposOF_1.xml" "Entrada Posterior"`; 
+        const listprinter = await this.database.getPrinter(this.query[2]);
+        const printer = listprinter.find((item) => item.terminal == this.trama[3]);
+        const printerstr = `cd TestImpR2 && java -jar ${JavaTSP100.jar} "${place}" "${time}" "${date}" "${codeBar}" "${printer.name}" "5" "NA" "${printer.xmldoc}" "Entrada Posterior"`; 
+
         exec(printerstr, async (error, stdout, stderr) => {
           if (error)  return  `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
           if (stderr) return `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
@@ -157,6 +160,7 @@ class PlotV2 {
         this.status;
         this.since;
         this.to;
+        this.query[4] = zeroPad(parseInt(this.query[4]), 3);
         this.query = await this.database.readCard(this.trama);
         if (this.query.length === 0) {
           this.status = 3;
@@ -186,6 +190,7 @@ class PlotV2 {
         this.status;
         this.since;
         this.to;
+        this.query[4] = zeroPad(parseInt(this.query[4]), 3);
         this.query = await this.database.readCard(this.trama);
         if (this.query.length === 0) {
           this.status = 3;
