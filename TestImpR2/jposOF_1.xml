@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JposEntries PUBLIC "-//JavaPOS//DTD//EN" "jpos/res/jcl.dtd">
+<JposEntries><JposEntry logicalName="TSP_OF_1_1"><creation factoryClass="com.starmicronics.starjavapos.ServiceInstanceFactory" serviceClass="com.starmicronics.starjavapos.POSPrinterService"/><vendor name="Star Micronics" url="www.star-m.jp/eng/index.htm"/><jpos category="POSPrinter" version="1.13"/><product description="Thermal receipt printer" name="TSP100LAN" url="www.futureprnt.com"/><prop name="model" type="String" value="TSP100LAN"/><prop name="portName" type="String" value="tsp100lan:TSP100LAN_192.168.0.170"/><prop name="portSettings" type="String" value=""/><prop name="ioTimeoutMillis" type="Integer" value="5000"/></JposEntry></JposEntries>
