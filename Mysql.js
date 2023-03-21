@@ -303,6 +303,17 @@ class MySQL {
     this.close();
     });
   }
+
+  statusPrinter(nterminal, state) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_printer_status(?,?);', [nterminal, state], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result);
+      });
+    this.close();
+    });
+  }
 }
 
 exports.MySQL = MySQL;

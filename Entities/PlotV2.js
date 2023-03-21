@@ -30,30 +30,27 @@ class PlotV2 {
         const date = this.trama.arg1.split(" ")[1];
         this.trama.arg2 = codeBar;
         let place = "Soluciones Plan B";
-        if (this.trama[2] == 12) {
-          place = "Ucacue Azogues";
-        }
+        if (this.trama[2] == 12) place = "Ucacue Azogues";
         result = await this.database.insertTicket(this.trama, 0);
         const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "TSP_OF_1_1" "5" "NA" "jposOF_1.xml" "Entrada Posterior"`; 
-        exec(printerstr, (error, stdout, stderr) => {
-          if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-          }
-          if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-          }
+        exec(printerstr, async (error, stdout, stderr) => {
+          if (error)  return  `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
+          if (stderr) return `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
           const list = stdout.split("\n");
           if (list[1] == "printer.getRecEmpty() == true\r") {
             console.log("Impresora sin papel");
+            await this.database.statusPrinter(this.trama[4], 1);
+            return `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
           } else if (list[1] == "printer.getCoverOpen() == true\r") {
+            await this.database.statusPrinter(this.trama[4], 1);
             console.log("Tapa abierta");
+            return `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
           } else {
-            console.log(`stdout: ${stdout}`);
+            console.log(`Ticket generado exitosamente`);
+            await this.database.statusPrinter(this.trama[4], 0);
+            return `SV,${this.trama[1]},${result[0].nTicket},${formatDate(now)},\r\n`;
           }
         });
-        return `SV,${this.trama[1]},${result[0].nTicket},${formatDate(now)},\r\n`;
       case "11":
         this.trama.arg1 = this.trama[4].slice(0, 12);
         this.query = await this.database.findTicket(this.trama);
