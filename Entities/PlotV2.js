@@ -23,6 +23,7 @@ class PlotV2 {
     switch (this.trama[1]) {
       case "10":
         let result;
+        let resultexec;
         const now = new Date();
         const codeBar = codeBarGenerator(this.trama[3], now);
         this.trama.arg1 = formatDate(now);
@@ -31,29 +32,32 @@ class PlotV2 {
         this.trama.arg2 = codeBar;
         let place = "Soluciones Plan B";
         if (this.trama[2] == 12) place = "Ucacue Azogues";
-        result = await this.database.insertTicket(this.trama, 0);
-        const listprinter = await this.database.getPrinter(this.query[2]);
+        const listprinter = await this.database.getPrinter(this.trama[2]);
         const printer = listprinter.find((item) => item.terminal == this.trama[3]);
-        const printerstr = `cd TestImpR2 && java -jar ${JavaTSP100.jar} "${place}" "${time}" "${date}" "${codeBar}" "${printer.name}" "5" "NA" "${printer.xmldoc}" "Entrada Posterior"`; 
-
-        exec(printerstr, async (error, stdout, stderr) => {
-          if (error)  return  `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
-          if (stderr) return `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
-          const list = stdout.split("\n");
-          if (list[1] == "printer.getRecEmpty() == true\r") {
-            console.log("Impresora sin papel");
-            await this.database.statusPrinter(this.trama[4], 1);
-            return `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
-          } else if (list[1] == "printer.getCoverOpen() == true\r") {
-            await this.database.statusPrinter(this.trama[4], 1);
-            console.log("Tapa abierta");
-            return `SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`;
-          } else {
-            console.log(`Ticket generado exitosamente`);
-            await this.database.statusPrinter(this.trama[4], 0);
-            return `SV,${this.trama[1]},${result[0].nTicket},${formatDate(now)},\r\n`;
-          }
+        const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "${printer.name}" "5" "NA" "${printer.xmldoc}.xml" "Entrada Posterior"`; 
+        resultexec = new Promise((resolve, reject) => {
+          exec(printerstr, async (error, stdout, stderr) => {
+            console.log("Imprimiendo ticket...");
+            if (error)  resolve(`SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`);
+            if (stderr) resolve (`SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`);
+            const list = stdout.split("\n");
+            if (list[1] == "printer.getRecEmpty() == true\r") {
+              console.log("Impresora sin papel");
+              await this.database.statusPrinter(this.trama[4], 1);
+              resolve(`SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`);
+            } else if (list[1] == "printer.getCoverOpen() == true\r") {
+              await this.database.statusPrinter(this.trama[4], 1);
+              console.log("Tapa abierta");
+              resolve(`SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`);
+            } else {
+              console.log(`Ticket generado exitosamente`);
+              await this.database.statusPrinter(parseInt(this.trama[4]), 0);
+              result = await this.database.insertTicket(this.trama, 0);
+              resolve(`SV,${this.trama[1]},${result[0].nTicket},${this.trama.arg1},\r\n`);
+            }
+          });
         });
+        return await resultexec;
       case "11":
         this.trama.arg1 = this.trama[4].slice(0, 12);
         this.query = await this.database.findTicket(this.trama);
@@ -75,7 +79,7 @@ class PlotV2 {
         return this.command = `SV,${this.trama[1]},${this.query[0].id},${this.query[0].description},\r\n`;
       case "21":
         this.query = await this.database.updateCMD(this.trama);
-        return this.command = 'exitoso';
+        return "SV,0,0,0,\r\n";
       case "30":
         if (this.trama[4] === '0x16') {
           process.env.PRINTER = true;
@@ -160,7 +164,8 @@ class PlotV2 {
         this.status;
         this.since;
         this.to;
-        this.query[4] = zeroPad(parseInt(this.query[4]), 3);
+        this.trama[4] = zeroPad(parseInt(this.trama[4]), 10);
+        console.log(this.trama[4]);
         this.query = await this.database.readCard(this.trama);
         if (this.query.length === 0) {
           this.status = 3;
