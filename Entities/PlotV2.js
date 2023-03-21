@@ -161,14 +161,14 @@ class PlotV2 {
         if (this.query.length === 0) {
           this.status = 3;
         } else {
-          this.since = new Date(this.query[0].since);
-          this.to = new Date(this.query[0].to);
+          this.since = new Date(this.query[0].in);
+          this.to = new Date(this.query[0].out);
           if (this.query[0].type === "m") {
             if (isExpirate(this.since, this.to)) {
               await this.database.updateCard(6, this.trama);
               this.status = 6;
             } else {
-              this.status = this.query[0].status;
+              this.status = 5;
             }
           } else if (this.query[0].type == "ps") {
             if (this.query[0].saldo <= 0) {
@@ -190,8 +190,8 @@ class PlotV2 {
         if (this.query.length === 0) {
           this.status = 3;
         } else {
-          this.since = new Date(this.query[0].since);
-          this.to = new Date(this.query[0].to);
+          this.since = new Date(this.query[0].in);
+          this.to = new Date(this.query[0].out);
           if (this.query[0].type === "m") {
             if (isExpirate(this.since, this.to)) {
               this.query = await this.database.updateCard(6, this.trama);
