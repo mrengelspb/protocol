@@ -1,4 +1,5 @@
 const { codeBarGenerator, getHourDifference, isExpirate, formatDate, calculateTotal } = require('../Helpers');
+const { exec } = require("child_process");
 
 class PlotV2 {
   query = null;
@@ -25,8 +26,33 @@ class PlotV2 {
         const now = new Date();
         const codeBar = codeBarGenerator(this.trama[3], now);
         this.trama.arg1 = formatDate(now);
+        const time = this.trama.arg1.split(" ")[0];
+        const date = this.trama.arg1.split(" ")[1];
         this.trama.arg2 = codeBar;
+        let place = "Soluciones Plan B";
+        if (this.trama[2] == 12) {
+          place = "Ucacue Azogues";
+        }
         result = await this.database.insertTicket(this.trama, 0);
+        const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "TSP_OF_1_1" "5" "NA" "jposOF_1.xml" "Entrada Posterior"`; 
+        exec(printerstr, (error, stdout, stderr) => {
+          if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+          }
+          if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+          }
+          const list = stdout.split("\n");
+          if (list[1] == "printer.getRecEmpty() == true\r") {
+            console.log("Impresora sin papel");
+          } else if (list[1] == "printer.getCoverOpen() == true\r") {
+            console.log("Tapa abierta");
+          } else {
+            console.log(`stdout: ${stdout}`);
+          }
+        });
         return `SV,${this.trama[1]},${result[0].nTicket},${formatDate(now)},\r\n`;
       case "11":
         this.trama.arg1 = this.trama[4].slice(0, 12);

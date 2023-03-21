@@ -16,3 +16,5 @@ java -jar JavaTSP100.jar "Soluciones Plan B" "16:24:04" "2020-06-05" "1201571624
 
 java -jar JavaTSP100.jar "Soluciones Plan B" "16:24:04" "2020-06-05" "120157162404" "TSP_OF_1_1" "20" "NA" "jposOF_1.xml" "Entrada Posterior"
 
+java -jar JavaTSP100.jar "Soluciones Plan B" "16:24:04" "2020-06-05" "120157162404" "TSP_OF_1_1" "20" "NA" "jposOF_JS.xml" "Entrada Posterior"
+
