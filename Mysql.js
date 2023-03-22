@@ -4,13 +4,13 @@ const { formatDate, addMinutes, getHourDifference } = require('./Helpers');
 class MySQL {
   open() {
     this.connection = Mysql.createConnection({
-      host: '34.75.110.6',
-      user: 'uspb-cidev01',
+      host: '104.196.154.200',
+      user: 'uspb-cimax01',
       database: 'sch_spbmaxweb',
-      password: 'Solucionespb2.', // root
+      password: 'Solucionespb1.', // root
     });
     this.connection.connect((err) => {
-      if (err) console.log(err);
+      if (err) console.log(err);  
     });
   }
 

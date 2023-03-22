@@ -1,0 +1,20 @@
+java -jar JavaTSP100.jar "U Catolica Azogues" "16:24:04" "2020-06-05" "120157162404" "IngresoUCACUEAZ_2" "20" "NA" "jpos_UCACUE_IN2.xml" "Entrada Posterior"
+java -jar JavaTSP100.jar "U Catolica Azogues" "16:24:04" "2020-06-05" "120157162404" "Ingreso_1" "20" "NA" "jpos_UCACUE_IN1.xml" "Entrada Posterior"
+
+java -jar JavaTSP100.jar "U Catolica Azogues" "16:24:04" "2020-06-05" "120157162404" ""IngresoUCACUEAZ_2_1" "20" "NA" "java152.xml" "Entrada Posterior"
+java -jar JavaTSP100.jar "U Catolica Azogues" "16:24:04" "2020-06-05" "120157162404" "IngresoUCACUEAZ_3" "20" "NA" "jpos_UCACUE_IN22.xml" "Entrada Posterior"
+
+***vALIDOS PARA pc
+java -jar JavaTSP100.jar "U Catolica Azogues" "16:24:04" "2020-06-05" "120157162404" "Ingreso_1_1" "20" "NA" "jpos_UCACUE_IN1.xml" "Entrada 1"
+java -jar JavaTSP100.jar "U Catolica Azogues" "16:24:04" "2020-06-05" "120157162404" "IngresoUCACUEAZ_3" "20" "NA" "jpos_UCACUE_IN2.xml" "Entrada Posterior"
+
+** DE NUEVO 2020****
+** DE NUEVO 2021****
+java -jar JavaTSP100.jar "Soluciones Plan B" "16:24:04" "2020-06-05" "120157162404" "StarTSP_OF1_1" "20" "NA" "jposOF1.xml" "Entrada Posterior"
+
+java -jar JavaTSP100.jar "Soluciones Plan B" "16:24:04" "2020-06-05" "120157162404" "StarTSP_OF1_1" "20" "NA" "jposOF1.xml" "Entrada Posterior"
+
+java -jar JavaTSP100.jar "Soluciones Plan B" "16:24:04" "2020-06-05" "120157162404" "TSP_OF_1_1" "20" "NA" "jposOF_1.xml" "Entrada Posterior"
+
+java -jar JavaTSP100.jar "Soluciones Plan B" "16:24:04" "2020-06-05" "120157162404" "TSP_OF_1_1" "20" "NA" "jposOF_JS.xml" "Entrada Posterior"
+

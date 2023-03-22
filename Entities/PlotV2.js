@@ -14,7 +14,6 @@ class PlotV2 {
     line = line.toString();
     line = line.slice(0, line.indexOf('\r\n'));
     this.trama = line.split(',');
-    console.log(this.trama);
   }
 
   async execute() {
@@ -24,6 +23,7 @@ class PlotV2 {
       case "10":
         let result;
         let resultexec;
+        let trama = this.trama
         const now = new Date();
         const codeBar = codeBarGenerator(this.trama[3], now);
         this.trama.arg1 = formatDate(now);
@@ -35,28 +35,31 @@ class PlotV2 {
         const listprinter = await this.database.getPrinter(this.trama[2]);
         const printer = listprinter.find((item) => item.terminal == this.trama[3]);
         const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "${printer.name}" "5" "NA" "${printer.xmldoc}.xml" "Entrada Posterior"`; 
+        result = await this.database.insertTicket(this.trama, 0);
         resultexec = new Promise((resolve, reject) => {
-          exec(printerstr, async (error, stdout, stderr) => {
+          exec(printerstr, (error, stdout, stderr) => {
             console.log("Imprimiendo ticket...");
-            if (error)  resolve(`SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`);
-            if (stderr) resolve (`SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`);
+            if (error)  return resolve(`SV,32,${trama[2]},${trama[3]},1,\r\n`);
+            console.log(stderr)
+            if (stderr) return resolve (`SV,32,${trama[2]},${trama[3]},2,\r\n`);
             const list = stdout.split("\n");
             if (list[1] == "printer.getRecEmpty() == true\r") {
               console.log("Impresora sin papel");
-              await this.database.statusPrinter(this.trama[4], 1);
-              resolve(`SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`);
+              this.database.statusPrinter(trama[4], 1);
+              return resolve(`SV,32,${trama[2]},${trama[3]},3,\r\n`);
             } else if (list[1] == "printer.getCoverOpen() == true\r") {
-              await this.database.statusPrinter(this.trama[4], 1);
+              this.database.statusPrinter(trama[4], 1);
               console.log("Tapa abierta");
-              resolve(`SV,32,${this.trama[2]},${this.trama[3]},1,\r\n`);
+              return resolve(`SV,32,${trama[2]},${trama[3]},4,\r\n`);
             } else {
               console.log(`Ticket generado exitosamente`);
-              await this.database.statusPrinter(parseInt(this.trama[4]), 0);
-              result = await this.database.insertTicket(this.trama, 0);
-              resolve(`SV,${this.trama[1]},${result[0].nTicket},${this.trama.arg1},\r\n`);
+              this.database.statusPrinter(parseInt(trama[4]), 0);
+              return resolve(`SV,${trama[1]},${result[0].nTicket},${trama.arg1},\r\n`);
             }
           });
         });
+        this.trama = null
+        this.query = null
         return await resultexec;
       case "11":
         this.trama.arg1 = this.trama[4].slice(0, 12);
@@ -165,7 +168,6 @@ class PlotV2 {
         this.since;
         this.to;
         this.trama[4] = zeroPad(parseInt(this.trama[4]), 10);
-        console.log(this.trama[4]);
         this.query = await this.database.readCard(this.trama);
         if (this.query.length === 0) {
           this.status = 3;
@@ -242,6 +244,7 @@ class PlotV2 {
   }
 
   showTrama() {
+    if (this.trama == null) return "Ticket impreso....."
     return this.trama.join(',');
   }
 }
