@@ -2,9 +2,8 @@ const { codeBarGenerator, getHourDifference, isExpirate, formatDate, calculateTo
 const { exec } = require("child_process");
 
 class PlotV2 {
-  query = null;
   command = null;
-  trama = null;
+  counter = 0;
   constructor(database) {
     this.database = database;
   }
@@ -15,29 +14,29 @@ class PlotV2 {
     return line.split(',');
   }
 
-  async execute() {
-    console.log(this.trama, "-----");
-    if (this.trama[0] !== "HS") return "SV,0,0,0,\r\n";
-    console.log(this.trama.length);
-    if (this.trama.length < 4) return "SV,0,0,0,\r\n";
+  async execute(trama) {
+    let query;
+    console.log(trama, "-----", this.counter++);
+    if (trama[0] !== "HS") return "SV,0,0,0,\r\n";
+    console.log(trama.length);
+    if (trama.length < 4) return "SV,0,0,0,\r\n";
 
-    switch (this.trama[1]) {
+    switch (trama[1]) {
       case "10":
         let result;
         let resultexec;
-        let trama = this.trama
         const now = new Date();
-        const codeBar = codeBarGenerator(this.trama[3], now);
-        this.trama.arg1 = formatDate(now);
-        const time = this.trama.arg1.split(" ")[0];
-        const date = this.trama.arg1.split(" ")[1];
-        this.trama.arg2 = codeBar;
+        const codeBar = codeBarGenerator(trama[3], now);
+        trama.arg1 = formatDate(now);
+        const time = trama.arg1.split(" ")[0];
+        const date = trama.arg1.split(" ")[1];
+        trama.arg2 = codeBar;
         let place = "Soluciones Plan B";
-        if (this.trama[2] == 12) place = "Ucacue Azogues";
-        const listprinter = await this.database.getPrinter(this.trama[2]);
-        const printer = listprinter.find((item) => item.terminal == this.trama[3]);
+        if (trama[2] == 12) place = "Ucacue Azogues";
+        const listprinter = await this.database.getPrinter(trama[2]);
+        const printer = listprinter.find((item) => item.terminal == trama[3]);
         const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "${printer.name}" "5" "NA" "${printer.xmldoc}.xml" "Entrada Posterior"`; 
-        result = await this.database.insertTicket(this.trama, 0);
+        result = await this.database.insertTicket(trama, 0);
         resultexec = new Promise((resolve, reject) => {
           exec(printerstr, (error, stdout, stderr) => {
             console.log("Imprimiendo ticket...");
@@ -62,31 +61,31 @@ class PlotV2 {
         });
         return await resultexec;
       case "11":
-        this.trama.arg1 = this.trama[4].slice(0, 12);
-        this.query = await this.database.findTicket(this.trama);
-        if (this.query.length === 0) return this.command = `SV,${this.trama[1]},${this.trama.arg1},3,\r\n`;
-        return this.command = `SV,${this.trama[1]},${this.query[0].code},${this.query[0].state},\r\n`;
+        trama.arg1 = trama[4].slice(0, 12);
+        query = await this.database.findTicket(trama);
+        if (query.length === 0) return this.command = `SV,${trama[1]},${trama.arg1},3,\r\n`;
+        return this.command = `SV,${trama[1]},${query[0].code},${query[0].state},\r\n`;
       case "12":
-        this.trama.arg1 = this.trama[4].slice(0, 12);
-        this.query = await this.database.finalizeTicket(this.trama);
+        trama.arg1 = trama[4].slice(0, 12);
+        query = await this.database.finalizeTicket(trama);
       case "13":
-        this.trama.arg1 = this.trama[4].slice(0, 12);
-        this.query = await this.database.getStateTicket(this.trama);
-        if (this.query.length === 0) return this.command = `SV,${this.trama[1]},${this.trama.arg1},4,\r\n`;
-        return this.command = `SV,${this.trama[1]},${this.query[0].code},${this.query[0].state},\r\n`;
+        trama.arg1 = trama[4].slice(0, 12);
+        query = await this.database.getStateTicket(trama);
+        if (query.length === 0) return this.command = `SV,${trama[1]},${trama.arg1},4,\r\n`;
+        return this.command = `SV,${trama[1]},${query[0].code},${query[0].state},\r\n`;
       case "20":
         console.log("Here I am ....");
-        let query = await this.database.searchCMD(this.trama);
+        let query = await this.database.searchCMD(trama);
         if (query.length === 0) return "SV,0,0,0,\r\n";
-        return this.command = `SV,${this.trama[1]},${this.query[0].id},${this.query[0].description},\r\n`;
+        return this.command = `SV,${trama[1]},${query[0].id},${query[0].description},\r\n`;
       case "21":
-        this.query = await this.database.updateCMD(this.trama);
+        query = await this.database.updateCMD(trama);
         return "SV,0,0,0,\r\n";
       case "30":
-        if (this.trama[4] === '0x16') {
+        if (trama[4] === '0x16') {
           process.env.PRINTER = true;
           process.env.PRINTER_CODE = 'Ok';
-        } else if (this.trama[4] === '0x1e') {
+        } else if (trama[4] === '0x1e') {
           process.env.PRINTER = false;
           process.env.PRINTER_CODE = 'Tapa abierta';
         }
@@ -95,148 +94,148 @@ class PlotV2 {
         this.status;
         this.since;
         this.to;
-        this.query = await this.database.readTag(this.trama);
-        if (this.query.length === 0) {
+        query = await this.database.readTag(trama);
+        if (query.length === 0) {
           this.status = 2;
         } else {
-          this.since = new Date(this.query[0].since);
-          this.to = new Date(this.query[0].to);
-          if (this.query[0].type === "m") {
+          this.since = new Date(query[0].since);
+          this.to = new Date(query[0].to);
+          if (query[0].type === "m") {
             if (isExpirate(this.since, this.to)) {
-              this.query = await this.database.updateTag(1, this.trama);
+              query = await this.database.updateTag(1, trama);
               this.status = 1;
             } else {
-              this.status = this.query[0].status
+              this.status = query[0].status
             }
-          } else if (this.query[0].type === "ps") {
-            if (this.query[0].saldo <= 0) {
-              await this.database.updateTag(6, this.trama);
+          } else if (query[0].type === "ps") {
+            if (query[0].saldo <= 0) {
+              await this.database.updateTag(6, trama);
               this.status = 1;
             }  else {
-              this.status = this.query[0].status
+              this.status = query[0].status
             }
-          } else if (this.query[0].type == "ad") {
+          } else if (query[0].type == "ad") {
             this.status = 0;
           }
         }
-        return this.command = `SV,40,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
+        return this.command = `SV,40,${trama[2]},${trama[3]},${trama[4]},${this.status},\r\n`;
       case "41":
         this.status;
         this.since;
         this.to;
-        this.query = await this.database.readTag(this.trama);
-        if (this.query.length === 0) {
+        query = await this.database.readTag(trama);
+        if (query.length === 0) {
           this.status = 2;
         } else {
-          this.since = new Date(this.query[0].since);
-          this.to = new Date(this.query[0].to);
-          if (this.query[0].type === "m") {
+          this.since = new Date(query[0].since);
+          this.to = new Date(query[0].to);
+          if (query[0].type === "m") {
             if (isExpirate(this.since, this.to)) {
-              this.query = await this.database.updateTag(1, this.trama);
+              query = await this.database.updateTag(1, trama);
               this.status = 1;
             } else {
-              this.status = this.query[0].status
+              this.status = query[0].status
             }
-          } else if (this.query[0].type === "ps") {
-            const tariffs = await this.database.getTariffs(this.trama);
+          } else if (query[0].type === "ps") {
+            const tariffs = await this.database.getTariffs(trama);
             const fractions = await this.database.getFractions(tariffs[0].code_fraction);
             tariffs[0].f = fractions;
-            this.query[0].out = formatDate(new Date());
-            const total = calculateTotal(this.query[0], tariffs, "4");
-            const saldo = this.query[0].saldo - total;
+            query[0].out = formatDate(new Date());
+            const total = calculateTotal(query[0], tariffs, "4");
+            const saldo = query[0].saldo - total;
             if (saldo > 0) {
               this.status = 0;
             } else {
               this.status = 1;
             }
-            await this.database.updateSaldo(1, this.query[0].id, saldo);
+            await this.database.updateSaldo(1, query[0].id, saldo);
 
 
-            if (this.query[0].saldo > 0) {
-              this.status = this.query[0].status
+            if (query[0].saldo > 0) {
+              this.status = query[0].status
               const minutes = getHourDifference(since, to);
-              console.log(this.query, minutes);
+              console.log(query, minutes);
             }
-          } else if (this.query[0].type == "ad") {
+          } else if (query[0].type == "ad") {
             this.status = 6;
           }
         }
-        return this.command = `SV,41,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
+        return this.command = `SV,41,${trama[2]},${trama[3]},${trama[4]},${this.status},\r\n`;
       case "60":
         this.status;
         this.since;
         this.to;
-        this.trama[4] = zeroPad(parseInt(this.trama[4]), 10);
-        this.query = await this.database.readCard(this.trama);
-        if (this.query.length === 0) {
+        trama[4] = zeroPad(parseInt(trama[4]), 10);
+        query = await this.database.readCard(trama);
+        if (query.length === 0) {
           this.status = 3;
         } else {
-          this.since = new Date(this.query[0].in);
-          this.to = new Date(this.query[0].out);
-          if (this.query[0].type === "m") {
+          this.since = new Date(query[0].in);
+          this.to = new Date(query[0].out);
+          if (query[0].type === "m") {
             if (isExpirate(this.since, this.to)) {
-              await this.database.updateCard(6, this.trama);
+              await this.database.updateCard(6, trama);
               this.status = 6;
             } else {
               this.status = 5;
             }
-          } else if (this.query[0].type == "ps") {
-            if (this.query[0].saldo <= 0) {
-              await this.database.updateCard(6, this.trama);
+          } else if (query[0].type == "ps") {
+            if (query[0].saldo <= 0) {
+              await this.database.updateCard(6, trama);
               this.status = 6;
             } else {
-              this.status = this.query[0].status;
+              this.status = query[0].status;
             }
-          } else if (this.query[0].type == "ad") {
+          } else if (query[0].type == "ad") {
             this.status = 6;
           }
         }
-        return this.command = `SV,60,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
+        return this.command = `SV,60,${trama[2]},${trama[3]},${trama[4]},${this.status},\r\n`;
       case "61":
         this.status;
         this.since;
         this.to;
-        this.query[4] = zeroPad(parseInt(this.query[4]), 3);
-        this.query = await this.database.readCard(this.trama);
-        if (this.query.length === 0) {
+        query[4] = zeroPad(parseInt(query[4]), 3);
+        query = await this.database.readCard(trama);
+        if (query.length === 0) {
           this.status = 3;
         } else {
-          this.since = new Date(this.query[0].in);
-          this.to = new Date(this.query[0].out);
-          if (this.query[0].type === "m") {
+          this.since = new Date(query[0].in);
+          this.to = new Date(query[0].out);
+          if (query[0].type === "m") {
             if (isExpirate(this.since, this.to)) {
-              this.query = await this.database.updateCard(6, this.trama);
+              query = await this.database.updateCard(6, trama);
               this.status = 6;
             } else {
-              this.status = this.query[0].status;
-              // await this.database.logCard([this.query[0].id,
-              //   this.query[0].code,
-              //   this.query[0].since,
-              //   this.query[0].to,
+              this.status = query[0].status;
+              // await this.database.logCard([query[0].id,
+              //   query[0].code,
+              //   query[0].since,
+              //   query[0].to,
               //   2,
               //   0,
               //   0,
               //   0
               // ]
             }
-          } else if (this.query[0].type === "ps") {
-            const tariffs = await this.database.getTariffs(this.trama);
+          } else if (query[0].type === "ps") {
+            const tariffs = await this.database.getTariffs(trama);
             const fractions = await this.database.getFractions(tariffs[0].code_fraction);
             tariffs[0].f = fractions;
-            this.query[0].out = formatDate(new Date());
-            const total = calculateTotal(this.query[0], tariffs, "4");
-            const saldo = this.query[0].saldo - total;
+            query[0].out = formatDate(new Date());
+            const total = calculateTotal(query[0], tariffs, "4");
+            const saldo = query[0].saldo - total;
             if (saldo > 0) {
               this.status = 5;
             } else {
               this.status = 6;
             }
-            await this.database.updateSaldo(2, this.query[0].id, saldo);
-          } else if (this.query[0].type == "ad") {
+            await this.database.updateSaldo(2, query[0].id, saldo);
+          } else if (query[0].type == "ad") {
             this.status = 6;
           }
         }
-        return this.command = `SV,61,${this.trama[2]},${this.trama[3]},${this.trama[4]},${this.status},\r\n`;
+        return this.command = `SV,61,${trama[2]},${trama[3]},${trama[4]},${this.status},\r\n`;
       default:
         return "Command not Found !\r\n";
     }
