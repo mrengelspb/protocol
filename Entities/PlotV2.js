@@ -5,7 +5,6 @@ class PlotV2 {
   query = null;
   command = null;
   trama = null;
-
   constructor(database) {
     this.database = database;
   }
@@ -13,11 +12,14 @@ class PlotV2 {
   makeTrama(line) {
     line = line.toString();
     line = line.slice(0, line.indexOf('\r\n'));
-    this.trama = line.split(',');
+    return line.split(',');
   }
 
   async execute() {
+    console.log(this.trama, "-----");
     if (this.trama[0] !== "HS") return "SV,0,0,0,\r\n";
+    console.log(this.trama.length);
+    if (this.trama.length < 4) return "SV,0,0,0,\r\n";
 
     switch (this.trama[1]) {
       case "10":
@@ -73,10 +75,9 @@ class PlotV2 {
         if (this.query.length === 0) return this.command = `SV,${this.trama[1]},${this.trama.arg1},4,\r\n`;
         return this.command = `SV,${this.trama[1]},${this.query[0].code},${this.query[0].state},\r\n`;
       case "20":
-        this.trama.arg1 = "2020-10-10 20:39:21";
-        this.trama.arg2 = "123456789123";
-        this.query = await this.database.searchCMD(this.trama);
-        if (this.query.length === 0) return "SV,0,0,0,\r\n";
+        console.log("Here I am ....");
+        let query = await this.database.searchCMD(this.trama);
+        if (query.length === 0) return "SV,0,0,0,\r\n";
         return this.command = `SV,${this.trama[1]},${this.query[0].id},${this.query[0].description},\r\n`;
       case "21":
         this.query = await this.database.updateCMD(this.trama);
@@ -241,11 +242,8 @@ class PlotV2 {
     }
   }
 
-  showTrama() {   
-    const line = this.trama.join(',');
-    this.trama = null;
-    this.query = null;
-    return line;
+  showTrama(trama) {
+    console.log(trama.join(','));
   }
 }
 

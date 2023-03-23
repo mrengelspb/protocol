@@ -13,8 +13,9 @@ class Tcp {
   }
   init() {
     this.server.on('connection', (socket) => {
-        socket.on('data', async (line) => {
-          console.log(line.toString());
+        socket.on('data', async (line) => 
+        {
+          let trama;
             if (line.toString() === "SPB,Faraday,V2,\r\n" || line.toString() === "SPB,Faraday,V2,\\r\\n") {
                 this.plot = new PlotV2(this.database);
                 socket.write("SV,Octupus,V2,Faraday,\r\n");
@@ -22,16 +23,17 @@ class Tcp {
               } else if (line.toString() === "SPB,Faraday,V1,\r\n") {
                 this.plot = new PlotV1(this.database);
                 socket.write("SV,Octupus,V1,Faraday,\r\n");
+                return
               }
               try {
-                this.plot.makeTrama(line);
+                trama = this.plot.makeTrama(line);
               } catch (error) {
                 process.env.DATABASE = 'down';
               }
               let response;
               try {
-                response = await this.plot.execute();
-                console.log(this.plot.showTrama());
+                response = await this.plot.execute(trama);
+                this.plot.showTrama(trama);
               } catch (error) {
                 console.log(error);
                 response = "Server Error reconnecting...";
@@ -74,7 +76,7 @@ class Tcp {
         });
 
     this.server.on('error', (err) => {
-        console.log('Error: Holi mundo ', err.message);
+        console.log('Error: ', err.message);
         process.env.OCTUPUS = 'down';
     });
   }

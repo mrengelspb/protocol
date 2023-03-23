@@ -69,7 +69,7 @@ class MySQL {
 
   searchCMD(trama) {
     this.open();
-    const args =  [2, trama[3], trama.arg1,  trama.arg2, trama[2]];
+    const args =  [2, trama[3], trama.arg1 || "2020-10-10 20:39:21",  trama.arg2 || "123456789123", trama[2]];
     return new Promise((resolve, reject) => {
       this.connection.query('CALL pa_controller_v1(?,?,?,?,?);', args, (err, result, fields) => {
         if (err) {
