@@ -16,7 +16,6 @@ class PlotV2 {
 
   async execute(trama) {
     let query;
-    console.log(trama, "-----", this.counter++);
     if (trama[0] !== "HS") return "SV,0,0,0,\r\n";
     console.log(trama.length);
     if (trama.length <= 4) return "SV,0,0,0,\r\n";
@@ -74,8 +73,7 @@ class PlotV2 {
         if (query.length === 0) return this.command = `SV,${trama[1]},${trama.arg1},4,\r\n`;
         return this.command = `SV,${trama[1]},${query[0].code},${query[0].state},\r\n`;
       case "20":
-        console.log("Here I am ....");
-        let query = await this.database.searchCMD(trama);
+        query = await this.database.searchCMD(trama);
         if (query.length === 0) return "SV,0,0,0,\r\n";
         return this.command = `SV,${trama[1]},${query[0].id},${query[0].description},\r\n`;
       case "21":
@@ -242,7 +240,7 @@ class PlotV2 {
   }
 
   showTrama(trama) {
-    console.log(trama.join(','));
+    console.log(trama.join(','), "----", this.counter++);
   }
 }
 
