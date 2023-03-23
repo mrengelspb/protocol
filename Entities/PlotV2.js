@@ -57,11 +57,12 @@ class PlotV2 {
             }
           });
         });
-        if (resultexec.split(",")[1] === "10") {
+        let sv = await resultexec;
+        if (sv.split(",")[1] === "10") {
           console.log("Guardando Ticket...");
           result = await this.database.insertTicket(trama, 0);
         }
-        return await resultexec;
+        return sv;
       case "11":
         trama.arg1 = trama[4].slice(0, 12);
         query = await this.database.findTicket(trama);
