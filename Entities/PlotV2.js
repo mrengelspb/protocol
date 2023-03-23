@@ -35,7 +35,6 @@ class PlotV2 {
         const listprinter = await this.database.getPrinter(trama[2]);
         const printer = listprinter.find((item) => item.terminal == trama[3]);
         const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "${printer.name}" "5" "NA" "${printer.xmldoc}.xml" "Entrada Posterior"`; 
-        result = await this.database.insertTicket(trama, 0);
         resultexec = new Promise((resolve, reject) => {
           exec(printerstr, (error, stdout, stderr) => {
             console.log("Imprimiendo ticket...");
@@ -58,6 +57,10 @@ class PlotV2 {
             }
           });
         });
+        if (resultexec.split(",")[1] === "10") {
+          console.log("Guardando Ticket...");
+          result = await this.database.insertTicket(trama, 0);
+        }
         return await resultexec;
       case "11":
         trama.arg1 = trama[4].slice(0, 12);
@@ -164,27 +167,27 @@ class PlotV2 {
         this.since;
         this.to;
         trama[4] = zeroPad(parseInt(trama[4]), 10);
-        query = await this.database.readCard(trama);
-        if (query.length === 0) {
+        let q = await this.database.readCard(trama);
+        if (q.length === 0) {
           this.status = 3;
         } else {
-          this.since = new Date(query[0].in);
-          this.to = new Date(query[0].out);
-          if (query[0].type === "m") {
+          this.since = new Date(q[0].in);
+          this.to = new Date(q[0].out);
+          if (q[0].type === "m") {
             if (isExpirate(this.since, this.to)) {
               await this.database.updateCard(6, trama);
               this.status = 6;
             } else {
               this.status = 5;
             }
-          } else if (query[0].type == "ps") {
-            if (query[0].saldo <= 0) {
+          } else if (q[0].type == "ps") {
+            if (q[0].saldo <= 0) {
               await this.database.updateCard(6, trama);
               this.status = 6;
             } else {
-              this.status = query[0].status;
+              this.status = q[0].status;
             }
-          } else if (query[0].type == "ad") {
+          } else if (q[0].type == "ad") {
             this.status = 6;
           }
         }
