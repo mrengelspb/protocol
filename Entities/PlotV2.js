@@ -58,8 +58,6 @@ class PlotV2 {
             }
           });
         });
-        this.trama = null
-        this.query = null
         return await resultexec;
       case "11":
         this.trama.arg1 = this.trama[4].slice(0, 12);
@@ -243,9 +241,11 @@ class PlotV2 {
     }
   }
 
-  showTrama() {
-    if (this.trama == null) return "Ticket impreso....."
-    return this.trama.join(',');
+  showTrama() {   
+    const line = this.trama.join(',');
+    this.trama = null;
+    this.query = null;
+    return line;
   }
 }
 
