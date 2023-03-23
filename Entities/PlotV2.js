@@ -19,7 +19,7 @@ class PlotV2 {
     console.log(trama, "-----", this.counter++);
     if (trama[0] !== "HS") return "SV,0,0,0,\r\n";
     console.log(trama.length);
-    if (trama.length < 4) return "SV,0,0,0,\r\n";
+    if (trama.length <= 4) return "SV,0,0,0,\r\n";
 
     switch (trama[1]) {
       case "10":
