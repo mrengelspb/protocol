@@ -180,6 +180,14 @@ class PlotV2 {
               this.status = 6;
             } else {
               this.status = 5;
+              await this.database.logCard("in", [
+                query[0].code, // code
+                query[0].since, // entrada
+                trama[3], // terminal
+                trama[2], // parking
+                1, // state
+                query[0].type, // type
+              ]);
             }
           } else if (q[0].type == "ps") {
             if (q[0].saldo <= 0) {
@@ -187,9 +195,25 @@ class PlotV2 {
               this.status = 6;
             } else {
               this.status = q[0].status;
+              await this.database.logCard("in", [
+                query[0].code, // code
+                query[0].since, // entrada
+                trama[3], // terminal
+                trama[2], // parking
+                1, // state
+                query[0].type, // type
+              ]);
             }
           } else if (q[0].type == "ad") {
-            this.status = 6;
+            this.status = 5;
+            await this.database.logCard("in", [
+              query[0].code, // code
+              query[0].since, // entrada
+              trama[3], // terminal
+              trama[2], // parking
+              1, // state
+              query[0].type, // type
+            ]);
           }
         }
         return this.command = `SV,60,${trama[2]},${trama[3]},${trama[4]},${this.status},\r\n`;
@@ -210,31 +234,64 @@ class PlotV2 {
               this.status = 6;
             } else {
               this.status = query[0].status;
-              // await this.database.logCard([query[0].id,
-              //   query[0].code,
-              //   query[0].since,
-              //   query[0].to,
-              //   2,
-              //   0,
-              //   0,
-              //   0
-              // ]
+              // await this.database.logCard("out", [
+              //   query[0].code, // code
+              //   query[0].since, // entrada
+              //   query[0].out, // salida
+              //   , // minutes
+              //   trama[3], // terminal
+              //   trama[2], // parking
+              //   1, // state
+              //   query[0].type, // type
+              // ]);
             }
           } else if (query[0].type === "ps") {
             const tariffs = await this.database.getTariffs(trama);
             const fractions = await this.database.getFractions(tariffs[0].code_fraction);
             tariffs[0].f = fractions;
+            const minutes = getHourDifference(this.since, this.to);
             query[0].out = formatDate(new Date());
             const total = calculateTotal(query[0], tariffs, "4");
             const saldo = query[0].saldo - total;
             if (saldo > 0) {
               this.status = 5;
+              await this.database.logCard("out", [
+                query[0].code, // code
+                query[0].since, // entrada
+                query[0].out, // salida
+                minutes, // minutes
+                total,
+                trama[3], // terminal
+                trama[2], // parking
+                2, // state
+                query[0].type, // type
+                saldo,
+              ]);
             } else {
               this.status = 6;
             }
             await this.database.updateSaldo(2, query[0].id, saldo);
           } else if (query[0].type == "ad") {
             this.status = 6;
+            const tariffs = await this.database.getTariffs(trama);
+            const fractions = await this.database.getFractions(tariffs[0].code_fraction);
+            tariffs[0].f = fractions;
+            const minutes = getHourDifference(this.since, this.to);
+            query[0].out = formatDate(new Date());
+            const total = calculateTotal(query[0], tariffs, "4");
+            const saldo = query[0].saldo - total;
+            await this.database.logCard("out", [
+              query[0].code, // code
+              query[0].since, // entrada
+              query[0].out, // salida
+              minutes, // minutes
+              total,
+              trama[3], // terminal
+              trama[2], // parking
+              1, // state
+              query[0].type, // type
+              saldo,
+            ]);
           }
         }
         return this.command = `SV,61,${trama[2]},${trama[3]},${trama[4]},${this.status},\r\n`;
@@ -245,7 +302,7 @@ class PlotV2 {
 
   showTrama(trama) {
     console.log(trama.join(','), "----", this.counter++);
-  }
+    }
 }
 
 exports.PlotV2 = PlotV2;

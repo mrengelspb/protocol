@@ -9,6 +9,12 @@ class MySQL {
       database: 'sch_spbmaxweb',
       password: 'Solucionespb1.', // root
     });
+    // this.connection = Mysql.createConnection({
+    //   host: '34.75.110.6',
+    //   user: 'uspb-max01',
+    //   database: 'sch_spbmaxweb',
+    //   password: 'Solucionespb2.', // root
+    // });
     this.connection.connect((err) => {
       if (err) console.log(err);  
     });
@@ -293,13 +299,20 @@ class MySQL {
     });
   }
 
-  logCard(args) {
+  logCard(type, args) {
     this.open();
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL pa_ca_updateCardByCode(?,?,?,?,?,?,?,?,?);', [args], (err, result, fields) => {
-        if (err) console.log(err);
-        resolve(result[0]);
-      });
+      if (type == "in") {
+        this.connection.query('CALL pa_prepay_logIn(?,?,?,?,?,?,?);', [args], (err, result, fields) => {
+          if (err) console.log(err);
+          resolve(result);
+        });
+      } else if (type == "out") {
+        this.connection.query('CALL pa_prepay_logOut(?,?,?,?,?,?,?,?,?,?);', [args], (err, result, fields) => {
+          if (err) console.log(err);
+          resolve(result);
+        });
+      }
     this.close();
     });
   }
