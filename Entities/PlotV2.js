@@ -17,7 +17,6 @@ class PlotV2 {
   async execute(trama) {
     let query;
     if (trama[0] !== "HS") return "SV,0,0,0,\r\n";
-    console.log(trama.length);
     if (trama.length <= 4) return "SV,0,0,0,\r\n";
 
     switch (trama[1]) {
@@ -182,7 +181,7 @@ class PlotV2 {
               this.status = 5;
               await this.database.logCard("in", [
                 query[0].code, // code
-                query[0].since, // entrada
+                this.since, // entrada
                 trama[3], // terminal
                 trama[2], // parking
                 1, // state
@@ -197,18 +196,19 @@ class PlotV2 {
               this.status = q[0].status;
               await this.database.logCard("in", [
                 query[0].code, // code
-                query[0].since, // entrada
+                this.since, // entrada
                 trama[3], // terminal
                 trama[2], // parking
                 1, // state
                 query[0].type, // type
               ]);
+              // update card to state 50
             }
           } else if (q[0].type == "ad") {
             this.status = 5;
             await this.database.logCard("in", [
               query[0].code, // code
-              query[0].since, // entrada
+              this.since, // entrada
               trama[3], // terminal
               trama[2], // parking
               1, // state
@@ -257,8 +257,8 @@ class PlotV2 {
               this.status = 5;
               await this.database.logCard("out", [
                 query[0].code, // code
-                query[0].since, // entrada
-                query[0].out, // salida
+                this.since, // entrada
+                this.out, // salida
                 minutes, // minutes
                 total,
                 trama[3], // terminal
@@ -282,8 +282,8 @@ class PlotV2 {
             const saldo = query[0].saldo - total;
             await this.database.logCard("out", [
               query[0].code, // code
-              query[0].since, // entrada
-              query[0].out, // salida
+              this.since, // entrada
+              this.out, // salida
               minutes, // minutes
               total,
               trama[3], // terminal
