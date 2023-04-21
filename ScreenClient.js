@@ -1,5 +1,6 @@
 function screenPrinter(line, color, screen) {
 	const net = require('net');
+	const PORT = 5200;
 	let ip;
 	let panel;
 	let coloraux1;
@@ -86,12 +87,12 @@ function screenPrinter(line, color, screen) {
 	const buffer = Buffer.from(trama);
 	const bytes = new Uint8Array(buffer);
 	const client = new net.Socket();
-	client.connect(5200, ip, function () {
+	client.connect(PORT, ip, function () {
 		client.write(bytes);
 		client.destroy();
 	});
 	client.on('error', () => {
-		console.log("Panel fuera de red");
+		console.log(`Panel ${ip} fuera de red`);
 	});
 }
 

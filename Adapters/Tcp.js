@@ -1,6 +1,7 @@
 const net = require('net');
 const { PlotV1 } = require('../Entities/PlotV1.js');
 const { PlotV2 } = require('../Entities/PlotV2.js');
+require('dotenv').config();
 
 class Tcp {
   constructor(database) {
@@ -9,9 +10,8 @@ class Tcp {
     this.counterB = 10;
     this.plot = new PlotV2(database);
     this.database = database;
-    //this.controller = new Controller(database);
   }
-  init() {
+  init(port) {
     this.server.on('connection', (socket) => {
         socket.on('data', async (line) => 
         {
@@ -36,43 +36,37 @@ class Tcp {
                 this.plot.showTrama(trama);
               } catch (error) {
                 console.log(error);
-                response = "Server Error reconnecting...";
+                response = "Server Tcp reconnecting...";
                 process.env.OCTUPUS = 'down';
               }
-              
-              // this.controller.makeTrama(data);
-              // if (this.controller.trama.nTerminal === '1') {
-              //   this.counterA = 10;
-              //   process.env.CONTROLLER_1 = true;
-              // } else if (this.controller.trama.nTerminal === '2') {
-              //   this.counterB = 10;
-              //   process.env.CONTROLLER_2 = true;
-              // }
-              // const response = await this.controller.execute();
-              // if (response !== 'exitoso') {
-              //   console.log(response);
-              //   ws.send(response);
-              // }
+
+              if (trama[3] === '1') {
+                this.counterA = 10;
+                process.env.CONTROLLER_1 = true;
+              } else if (trama[3] === '2') {
+                this.counterB = 10;
+                process.env.CONTROLLER_2 = true;
+              }
               console.log(response);
               socket.write(response);
         });
         socket.on('error', (err) => {
-            console.log('Error: Client Desconnected... ', err.message);
+            console.log('Client Tcp desconnected\n', err.message);
             process.env.OCTUPUS = 'down';
         });
     });
 
     this.server.listen(3070, function() {
-        console.log('server listening to 3070');
+        console.log(`Server Tcp running on port: ${port}`);
     });
 
     this.server.on('close', () => {
-        // if (this.counterA === 0 && this.controller.trama.nTerminal !== '1') {
-        //   process.env.CONTROLLER_1 = false;
-        // } else if (this.counterB === 0 && this.controller.trama.nTerminal !== '2') {
-        //   process.env.CONTROLLER_2 = false;
-        // }
-            console.log('Client was disconnected!');
+        if (this.counterA === 0 && trama[3] !== '1') {
+          process.env.CONTROLLER_1 = false;
+        } else if (this.counterB === 0 && trama[3] !== '2') {
+          process.env.CONTROLLER_2 = false;
+        }
+            console.log('Client Tcp was disconnected!');
         });
 
     this.server.on('error', (err) => {
@@ -88,10 +82,10 @@ class Tcp {
     }, 1000);
 
     setInterval(() => {
-      if (this.counterA === 0 && this.controller.trama.nTerminal !== '1') {
+      if (this.counterA === 0 && trama[3] !== '1') {
         process.env.CONTROLLER_1 = false;
         this.counterA = 10;
-      } else if (this.counterB === 0 && this.controller.trama.nTerminal !== '2') {
+      } else if (this.counterB === 0 && trama[3] !== '2') {
         process.env.CONTROLLER_2 = false;
         this.counterB = 10;
       }

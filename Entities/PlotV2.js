@@ -29,39 +29,54 @@ class PlotV2 {
         const time = trama.arg1.split(" ")[0];
         const date = trama.arg1.split(" ")[1];
         trama.arg2 = codeBar;
-        let place = "Soluciones Plan B";
-        if (trama[2] == 12) place = "Ucacue Azogues";
-        const listprinter = await this.database.getPrinter(trama[2]);
-        const printer = listprinter.find((item) => item.terminal == trama[3]);
-        const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "${printer.name}" "5" "NA" "${printer.xmldoc}.xml" "Entrada Posterior"`; 
-        resultexec = new Promise((resolve, reject) => {
-          exec(printerstr, (error, stdout, stderr) => {
-            console.log("Imprimiendo ticket...");
-            if (error)  return resolve(`SV,32,${trama[2]},${trama[3]},1,\r\n`);
-            console.log(stderr)
-            if (stderr) return resolve (`SV,32,${trama[2]},${trama[3]},2,\r\n`);
-            const list = stdout.split("\n");
-            if (list[1] == "printer.getRecEmpty() == true\r") {
-              console.log("Impresora sin papel");
-              this.database.statusPrinter(trama[4], 1);
-              return resolve(`SV,32,${trama[2]},${trama[3]},3,\r\n`);
-            } else if (list[1] == "printer.getCoverOpen() == true\r") {
-              this.database.statusPrinter(trama[4], 1);
-              console.log("Tapa abierta");
-              return resolve(`SV,32,${trama[2]},${trama[3]},4,\r\n`);
-            } else {
-              console.log(`Ticket generado exitosamente`);
-              this.database.statusPrinter(parseInt(trama[4]), 0);
-              return resolve(`SV,${trama[1]},${result[0].nTicket},${trama.arg1},\r\n`);
-            }
+        if (trama[2] == 14) {
+          let place;
+          let freePlaces = await this.database.getPlacesfree(0);
+          if (freePlaces == 0) {
+            freePlaces = [{ number: 0 }];
+            place = 0;
+          } else {
+            place = Math.floor(Math.random() * Math.floor(freePlaces.length));
+            this.database.updatePlaceStatus(freePlaces[place].number);
+            result = await this.database.insertTicket(trama, freePlaces[place].number);
+          }
+          return `SV,${trama[1]},${result[0].nTicket},${formatDate(now)},${freePlaces[place].number},\r\n`;
+        } else {
+          let place = "Soluciones Plan B";
+          if (trama[2] == 12) place = "Ucacue Azogues";
+          const listprinter = await this.database.getPrinter(trama[2]);
+          const printer = listprinter.find((item) => item.terminal == trama[3]);
+          const printerstr = `cd TestImpR2 && java -jar JavaTSP100.jar "${place}" "${time}" "${date}" "${codeBar}" "${printer.name}" "5" "NA" "${printer.xmldoc}.xml" "Entrada Posterior"`; 
+          resultexec = new Promise((resolve, reject) => {
+            exec(printerstr, (error, stdout, stderr) => {
+              console.log("Imprimiendo ticket...");
+              if (error)  return resolve(`SV,32,${trama[2]},${trama[3]},1,\r\n`);
+              console.log(stderr)
+              if (stderr) return resolve (`SV,32,${trama[2]},${trama[3]},2,\r\n`);
+              const list = stdout.split("\n");
+              if (list[1] == "printer.getRecEmpty() == true\r") {
+                console.log("Impresora sin papel");
+                this.database.statusPrinter(trama[4], 1);
+                return resolve(`SV,32,${trama[2]},${trama[3]},3,\r\n`);
+              } else if (list[1] == "printer.getCoverOpen() == true\r") {
+                this.database.statusPrinter(trama[4], 1);
+                console.log("Tapa abierta");
+                return resolve(`SV,32,${trama[2]},${trama[3]},4,\r\n`);
+              } else {
+                console.log(`Ticket generado exitosamente`);
+                this.database.statusPrinter(parseInt(trama[4]), 0);
+                return resolve(`SV,${trama[1]},${result[0].nTicket},${trama.arg1},\r\n`);
+              }
+            });
           });
-        });
-        let sv = await resultexec;
-        if (sv.split(",")[1] === "10") {
-          console.log("Guardando Ticket...");
-          result = await this.database.insertTicket(trama, 0);
+          let sv = await resultexec;
+          if (sv.split(",")[1] === "10") {
+            console.log("Guardando Ticket...");
+            result = await this.database.insertTicket(trama, 0);
+          }
+          return sv;
         }
-        return sv;
+        
       case "11":
         trama.arg1 = trama[4].slice(0, 12);
         query = await this.database.findTicket(trama);

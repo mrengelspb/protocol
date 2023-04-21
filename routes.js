@@ -1,6 +1,7 @@
 const express = require('express');
-const { database } = require('./Mysql');
+const { MySQL } = require('./Mysql');
 
+const database = new MySQL('local');
 const TicketController = express.Router();
 
 TicketController.post('/search/:id', async (req, res) => {
@@ -24,14 +25,18 @@ TicketController.put('/update', async (req, res) => {
   Date.prototype.addMins = function(m) {
     this.setTime(this.getTime() + (m*60*1000));
     return this;
-  } 
+  }
+  const split = req.body.out.split(", ");
+  const date = split[0].split("/");
+  req.body.out = `${date[2]}-${date[1]}-${date[0]} ${split[1]}`;
+  console.log(req.body);
   const args = [
     req.body.id,
-    new Date(req.body.out).toISOString().replace("T", " ").split(".")[0],
+    req.body.out,
     req.body.state,
     req.body.min_used,
     req.body.total,
-    new Date(req.body.out).addMins(10).toISOString().replace("T", " ").split(".")[0],
+    req.body.out,
   ];
   const response =  await database.updateTicket(args);
   res.send(response);
@@ -67,6 +72,17 @@ TicketController.get('/controller', async (req, res) => {
     pc: process.env.PRINTER_CODE,
   }
   res.send(status);
+});
+
+TicketController.get('/list', async (req, res) => {
+  const response =  await database.spaces();
+  res.send(response);
+});
+
+TicketController.post('/free', async (req, res) => {
+  const { place, ticket } = req.body;
+  const response =  await database.spacesFree(place, ticket);
+  res.send(response);
 });
 
 

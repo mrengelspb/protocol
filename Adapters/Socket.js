@@ -10,7 +10,6 @@ class Socket {
     this.counterB = 10;
     this.plot = new PlotV1(database);
     this.database = database;
-    //this.controller = new Controller(database);
   }
   init() {
     this.sockserver.on('connection', (ws) => {
@@ -32,35 +31,35 @@ class Socket {
           response = await this.plot.execute();
         } catch (error) {
           console.log(error);
-          response = "Server Error reconnecting...";
+          response = "Server Ws Error reconnecting...";
           process.env.OCTUPUS = 'down';
         }
         console.log(this.plot.showTrama());
         
-        // this.controller.makeTrama(data);
-        // if (this.controller.trama.nTerminal === '1') {
-        //   this.counterA = 10;
-        //   process.env.CONTROLLER_1 = true;
-        // } else if (this.controller.trama.nTerminal === '2') {
-        //   this.counterB = 10;
-        //   process.env.CONTROLLER_2 = true;
-        // }
-        // const response = await this.controller.execute();
-        // if (response !== 'exitoso') {
-        //   console.log(response);
-        //   ws.send(response);
-        // }
+        this.controller.makeTrama(data);
+        if (this.controller.trama.nTerminal === '1') {
+          this.counterA = 10;
+          process.env.CONTROLLER_1 = true;
+        } else if (this.controller.trama.nTerminal === '2') {
+          this.counterB = 10;
+          process.env.CONTROLLER_2 = true;
+        }
+        response = await this.controller.execute();
+        if (response !== 'exitoso') {
+          console.log(response);
+          ws.send(response);
+        }
         ws.send(response);
       });
 
       ws.on('close', () => {
         this.connections.delete(ws);
-        // if (this.counterA === 0 && this.controller.trama.nTerminal !== '1') {
-        //   process.env.CONTROLLER_1 = false;
-        // } else if (this.counterB === 0 && this.controller.trama.nTerminal !== '2') {
-        //   process.env.CONTROLLER_2 = false;
-        // }
-        console.log('Client was disconnected!');
+        if (this.counterA === 0 && this.controller.trama.nTerminal !== '1') {
+          process.env.CONTROLLER_1 = false;
+        } else if (this.counterB === 0 && this.controller.trama.nTerminal !== '2') {
+          process.env.CONTROLLER_2 = false;
+        }
+        console.log('Client Ws was disconnected!');
       });
     });
   }

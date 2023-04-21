@@ -1,20 +1,36 @@
 const Mysql = require('mysql2');
 const { formatDate, addMinutes, getHourDifference } = require('./Helpers');
+require('dotenv').config();
 
 class MySQL {
+  constructor(env) {
+    if (env === "local") {
+      this.config = {
+        host: process.env.HOST_DB,
+        user: process.env.USER_DB,
+        database: process.env.NAME_DB,
+        password: process.env.PASSWORD_DB,
+      }
+    }
+    if (env === 'cloud') {
+      this.config = {
+        host: process.env.HOST_CLOUD,
+        user: process.env.USER_CLOUD,
+        database: process.env.DATABASE_NAME_CLOUD,
+        password: process.env.PASSWORD_CLOUD,
+      }
+    }
+    if (env === 'dev') {
+      this.config = {
+        host: process.env.HOST_CLOUD_DEV,
+        user: process.env.USER_CLOUD_DEV,
+        database: process.env.DATABASE_NAME_CLOUD_DEV,
+        password: process.env.PASSWORD_CLOUD_DEV,
+      }
+    }
+  }
   open() {
-    this.connection = Mysql.createConnection({
-      host: '104.196.154.200',
-      user: 'uspb-cimax01',
-      database: 'sch_spbmaxweb',
-      password: 'Solucionespb1.', // root
-    });
-    // this.connection = Mysql.createConnection({
-    //   host: '34.75.110.6',
-    //   user: 'uspb-max01',
-    //   database: 'sch_spbmaxweb',
-    //   password: 'Solucionespb2.', // root
-    // });
+    this.connection = Mysql.createConnection(this.config);
     this.connection.connect((err) => {
       if (err) console.log(err);  
     });
@@ -63,9 +79,9 @@ class MySQL {
 
   insertTicket(trama, place) {
     this.open();
-    const args =  [1, trama[3], trama.arg1, trama.arg2, trama[2], place, 13];
+    const args =  [1, trama[3], trama.arg1, trama.arg2, trama[2], place];
     return new Promise((resolve, reject) => {
-      this.connection.query('CALL pa_controller_v2(?,?,?,?,?,?,?);', args, (err, result, fields) => {
+      this.connection.query('CALL pa_controller_v2(?,?,?,?,?,?);', args, (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0]);
       });
@@ -334,6 +350,28 @@ class MySQL {
       this.connection.query('CALL pa_printer_get(?);', [parking], (err, result, fields) => {
         if (err) console.log(err);
         resolve(result[0]);
+      });
+    this.close();
+    });
+  }
+
+  spaces() {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_spaces_get();', (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result[0]);
+      });
+    this.close();
+    });
+  }
+
+  spacesFree(space, ticket) {
+    this.open();
+    return new Promise((resolve, reject) => {
+      this.connection.query('CALL pa_spaces_free(?, ?);', [space, ticket], (err, result, fields) => {
+        if (err) console.log(err);
+        resolve(result);
       });
     this.close();
     });

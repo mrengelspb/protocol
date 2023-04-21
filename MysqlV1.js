@@ -10,10 +10,10 @@ class Mysql1 {
   }
   init() {
     this.database = Mysql.createConnection({
-      host: '34.75.110.6',
-      user: 'uspb-cidev01',
-      database: 'sch_spbmaxweb',
-      password: 'Solucionespb2.', // root
+      host: '',
+      user: '',
+      database: '',
+      password: '',
     });
     this.database.connect((err) => {
       console.log(err);

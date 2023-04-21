@@ -1,26 +1,59 @@
-/* Protocol Conection */
-const express = require('express');
-const { WebService } = require('./WebService');
+const { Socket } = require('./Adapters/Socket.js');
+const { Tcp } = require('./Adapters/Tcp.js');
+const { Http } = require('./Adapters/Http.js');
+const { Protocol } = require('./Application/Protocol.js');
+const { Database } = require('./Adapters/Database.js');
 const { screenPrinter } = require('./ScreenClient');
-const { Controller } = require('./Controller');
-const { database } = require('./Mysql');
 
-const cors = require('cors');
-const TicketController = require('./routes');
-require('dotenv').config();
-function RunServer() {
-    const webService = new WebService(Controller);
-    webService.init(database);
+console.log("---------------- Octupus V.2.0.1 ----------------");
+console.log("Soluciones Plan B, Todos los derechos reservados.");
+console.log("         ________________________ ")
+console.log("        |                        |") 
+console.log("        |                        |") 
+console.log("        |    [O]           [O]   |") 
+console.log("        |                        |") 
+console.log("        |         -------        |") 
+console.log("        |                        |") 
+console.log("        --------------------------") 
+console.log("          | \\    /    \  |  /    ") 
+console.log("          | \\'   '/   \` | /     ")
+console.log("         /  \ \   / \_ / /  \     ")
+console.log("       /   /    \ \   \ \    \    ")
+console.log("       |  |     /  \    \ -    \  ")
+console.log("       \ \     /_   \   /  \   // ")
+console.log("        \ \_   /     \  \   _/  \ ")
+console.log("        `\  \  \      \ /        /")
+console.log("\n\nOC -> Starting Ports and Adapters");
+try {
+    const protocol = new Protocol();
+    protocol.openPort({ adapter: Database, type: 'db' });
+    protocol.openPort({ adapter: Tcp, port: 3070, type: 'tcp' });
+    protocol.openPort({ adapter: Http, port: 3001, type: 'http' });
+    setImmediate(() => {
+        if (process.env.OCTUPUS === 'down') {
+            process.env.OCTUPUS = 'Ok';
+            protocol.openPort({ adapter: Tcp, port: 3070, type: 'tcp' });
+        }
+    });
+    setImmediate(() => {
+        if (process.env.DATABASE === 'down') {
+            process.env.DATABASE = 'Ok';
+            protocol.openPort({ adapter: Tcp, port: 3070, type: 'tcp' });
+        }
+    });
+} catch (error) {
+    console.log("OC -> Error starting Ports and Adapters");
+}
 
-    const app = express();
-    app.use(express.json());
-    app.use(cors());
-    app.use("/ticket", TicketController);
-    app.listen(3001, () => {console.log("Server running on port: 3001")});
 
+try {
+    console.log("OC -> Starting screen printer loops");
+    let database = new Database('local');
     setInterval(async () => {
         let avaliablePlaces;
+        database.open();
         avaliablePlaces = await database.getPlacesBySection();
+        database.close();
 
         if (avaliablePlaces[0].VAR1 != 0) {
             screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR1}`, "green", 2);
@@ -49,7 +82,8 @@ function RunServer() {
             screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR4}`, "red", 1);
         }
     }, 20000);
+} catch (error) {
+    console.log("OC -> Error starting screen printer loops");
 }
 
-RunServer();
- 
+
