@@ -1,9 +1,10 @@
+#!/bin/bash/env node
 const { Socket } = require('./Adapters/Socket.js');
 const { Tcp } = require('./Adapters/Tcp.js');
 const { Http } = require('./Adapters/Http.js');
 const { Protocol } = require('./Application/Protocol.js');
 const { Database } = require('./Adapters/Database.js');
-const { screenPrinter } = require('./ScreenClient');
+const { screenPrinter } = require('./ScreenClient.js');
 
 console.log("---------------- Octupus V.2.0.1 ----------------");
 console.log("Soluciones Plan B, Todos los derechos reservados.");
@@ -51,10 +52,7 @@ try {
     let database = new Database('local');
     setInterval(async () => {
         let avaliablePlaces;
-        database.open();
         avaliablePlaces = await database.getPlacesBySection();
-        database.close();
-
         if (avaliablePlaces[0].VAR1 != 0) {
             screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR1}`, "green", 2);
         } else {
@@ -64,11 +62,11 @@ try {
         if (avaliablePlaces[0].VAR2 != 0) {
             setTimeout(() => {
                 screenPrinter(`${avaliablePlaces[0].VAR2} <- LIBRES`, "green", 2);
-            }, 10000);
+            }, 20);
         } else {
             setTimeout(() => {
                 screenPrinter(`${avaliablePlaces[0].VAR2} <- LIBRES`, "red", 2);
-            }, 10000);
+            }, 20);
         }
 
         if (avaliablePlaces[0].VAR3 != 0) {
@@ -81,7 +79,7 @@ try {
         } else {
             screenPrinter(`LIBRES -> ${avaliablePlaces[0].VAR4}`, "red", 1);
         }
-    }, 20000);
+    }, 20);
 } catch (error) {
     console.log("OC -> Error starting screen printer loops");
 }

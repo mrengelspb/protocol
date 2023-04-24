@@ -1,3 +1,15 @@
 /node_modules
 /package-lock.json
 .vscode
+/release-builds
+/resources
+/*.pak
+/*.dll
+/*.dat
+/LICENSE
+/*.chromium.html
+/*.exe
+/*.bin
+/vk_swiftshader_icd.json
+/version
+/locales
